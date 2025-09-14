@@ -37,5 +37,5 @@ More functions will probably be added later on as the need arises.
 
 ``` r
 # if needed install.packages("remotes")
-remotes::install_github("thingsinflow/targetextras")
+remotes::install_github("thingsinflow/targethelpers")
 ```
