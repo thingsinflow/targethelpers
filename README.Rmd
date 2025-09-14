@@ -1,15 +1,22 @@
 ---
-output:
-  github_document:
-    html_preview: false
-editor_options: 
-  markdown: 
-    wrap: sentence
+output: github_document
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
 # targethelpers
+
+<!-- badges: start -->
+<!-- badges: end -->
 
 A simple package that provides some extra functions which I have found to be useful when creating {targets}/{tarchetypes} pipelines for scraping data from websites.
 
@@ -37,7 +44,53 @@ More functions will probably be added later on as the need arises.
 
 ## Installation
 
+You can install the development version of targethelpers from [GitHub](https://github.com/) with:
+
 ``` r
-# if needed install.packages("remotes")
-remotes::install_github("thingsinflow/targethelpers")
+# install.packages("pak")
+pak::pak("thingsinflow/targethelpers")
+```
+
+## Example
+
+This is a basic example which shows how to use `targethelpers::rows_to_files()` as part of an automated `targets` pipeline that saves and maintains each row of a data frame as a separate file that is then monitored automatically downstream:
+
+```{r example}
+library(targethelpers)
+
+# Typical use case as part of a targets pipeline
+targets::tar_dir({
+  targets::tar_script({
+
+    library(targets)
+    library(tarchetypes)
+
+    list(
+      tar_target(
+        name = data,
+        command = jsonlite::fromJSON("https://cranlogs.r-pkg.org/top/last-month/100")$downloads
+      ),
+      tar_target(
+        name = rows_as_files,
+        command = data |>
+          targethelpers::rows_to_files(id_col_name = "package", extension = ".rds"),
+        format = "rds"
+      ),
+      tar_files(
+        name = input,
+        command = rows_as_files$data_df_w_filepaths$file_path
+      ),
+      tar_target(
+        name = whatever,
+        command = input |>
+            readRDS()
+        # Your code here
+        ,
+        pattern = map(input)
+      )
+    )
+  })
+  targets::tar_make()
+  targets::tar_read(whatever)
+})
 ```
