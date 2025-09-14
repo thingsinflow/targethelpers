@@ -213,8 +213,6 @@ compare_with_existing_files <- function(new_data_df_w_filepaths,
 #'
 #' @return A character vector of the file paths that were created.
 #'
-#' @export
-#'
 #' @details This is one of three helper functions that work together to keep a
 #'   set of per‑property files in sync with the live Boliga dataset:
 #'
@@ -313,8 +311,6 @@ save_each_row_as_a_separate_file <- function(data_to_save_df_w_filepaths,
 #'
 #'   All of this is done in order for making it possible for `targets` to use
 #'   it's branching magic to run the pipeline as efficiently as possible.
-#'
-#' @export
 #'
 #' @seealso These functions are designed to work together, see details above:
 #'   [compare_with_existing_files()], [save_each_row_as_a_separate_file()],

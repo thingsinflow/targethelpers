@@ -73,7 +73,8 @@ targets::tar_dir({
       tar_target(
         name = rows_as_files,
         command = data |>
-          rows_to_files(id_col_name = "package", extension = ".rds")
+          targethelpers::rows_to_files(id_col_name = "package", extension = ".rds"),
+        format = "rds"
       ),
       tar_files(
         name = input,
@@ -89,7 +90,7 @@ targets::tar_dir({
       )
     )
   })
-  targets::tar_make(callr_function = NULL, use_crew = FALSE, as_job = FALSE)
+  targets::tar_make()
   targets::tar_read(whatever)
 })
 }
