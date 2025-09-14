@@ -439,7 +439,8 @@ add_filepaths_to_df <- function(data_df,
 #'       tar_target(
 #'         name = rows_as_files,
 #'         command = data |>
-#'           rows_to_files(id_col_name = "package", extension = ".rds")
+#'           targethelpers::rows_to_files(id_col_name = "package", extension = ".rds"),
+#'         format = "rds"
 #'       ),
 #'       tar_files(
 #'         name = input,
@@ -455,7 +456,7 @@ add_filepaths_to_df <- function(data_df,
 #'       )
 #'     )
 #'   })
-#'   targets::tar_make(callr_function = NULL, use_crew = FALSE, as_job = FALSE)
+#'   targets::tar_make()
 #'   targets::tar_read(whatever)
 #' })
 rows_to_files <- function(data_df,                   # The data rows to convert to files
