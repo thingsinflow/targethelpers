@@ -1,0 +1,34 @@
+#' @keywords internal
+"_PACKAGE"
+
+## usethis namespace: start
+#' @importFrom dplyr %>%
+#' @importFrom dplyr all_of
+#' @importFrom dplyr any_of
+#' @importFrom dplyr filter
+#' @importFrom dplyr group_by
+#' @importFrom dplyr group_split
+#' @importFrom dplyr mutate
+#' @importFrom dplyr pull
+#' @importFrom dplyr select
+#' @importFrom jsonlite fromJSON
+#' @importFrom logger as.loglevel
+#' @importFrom logger log_debug
+#' @importFrom logger log_info
+#' @importFrom logger log_threshold
+#' @importFrom nanoparquet read_parquet
+#' @importFrom nanoparquet write_parquet
+#' @importFrom purrr is_empty
+#' @importFrom purrr is_null
+#' @importFrom purrr map_chr
+#' @importFrom purrr map_df
+#' @importFrom purrr walk
+#' @importFrom qs2 qs_read
+#' @importFrom rlang .data
+#' @importFrom stringr str_remove
+#' @importFrom tarchetypes tar_files
+#' @importFrom targets tar_target
+#' @importFrom tibble tibble
+#' @importFrom withr local_tempdir
+## usethis namespace: end
+NULL

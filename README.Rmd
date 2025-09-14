@@ -1,0 +1,43 @@
+---
+output:
+  github_document:
+    html_preview: false
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# targethelpers
+
+A simple package that provides some extra functions which I have found to be useful when creating {targets}/{tarchetypes} pipelines for scraping data from websites.
+
+## Features
+
+Currently the {targethelpers} package only implement the two functions listed below.
+
+More functions will probably be added later on as the need arises.
+
+### File Management Helpers
+
+`add_filepaths_to_df`
+
+> Returns the input dataframe with a `filepath` row added.
+
+`rows_to_files`
+
+> When you scrape websites you only want to scrape and process the data, when it has changed.
+> This function takes the input dataframe (with a `filepath` row added) and saves each row as a separate file.
+> On the following runs the function: - adds new rows as files (if any).
+> - updates the files of existing rows that have changed (if any).
+> - deletes files whose rows are not present in the datafram any more (if any).
+> The output of the function is a summary of the above changes (if any) as well as a list of the files currently present.
+> The output file list is typically used as input for a regular `tarchetypes::tar_files` file monitoring pipeline step.
+
+## Installation
+
+``` r
+# if needed install.packages("remotes")
+remotes::install_github("thingsinflow/targetextras")
+```
