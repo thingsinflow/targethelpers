@@ -5,15 +5,20 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/targethelpers)](https://CRAN.R-project.org/package=targethelpers)
+[![Codecov test
+coverage](https://codecov.io/gh/thingsinflow/targethelpers/graph/badge.svg)](https://app.codecov.io/gh/thingsinflow/targethelpers)
+[![R-CMD-check](https://github.com/thingsinflow/targethelpers/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thingsinflow/targethelpers/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 A simple package that provides some extra functions which I have found
-to be useful when creating {targets}/{tarchetypes} pipelines for
+to be useful when creating `targets`/`tarchetypes` pipelines for
 scraping data from websites.
 
 ## Features
 
-Currently the {targethelpers} package only implement the two functions
+Currently the `targethelpers` package only implement the two functions
 listed below.
 
 More functions will probably be added later on as the need arises.
@@ -39,7 +44,7 @@ More functions will probably be added later on as the need arises.
 
 ## Installation
 
-You can install the development version of targethelpers from
+You can install the development version of `targethelpers` from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -52,7 +57,7 @@ pak::pak("thingsinflow/targethelpers")
 This is a basic example which shows how to use
 `targethelpers::rows_to_files()` as part of an automated `targets`
 pipeline that saves and maintains each row of a data frame as a separate
-file that is then monitored automatically downstream:
+file that can then be monitored automatically downstream:
 
 ``` r
 library(targethelpers)
@@ -93,20 +98,20 @@ targets::tar_dir({
   targets::tar_read(whatever)
 })
 #> + data dispatched
-#> ✔ data completed [913ms, 1.21 kB]
+#> ✔ data completed [399ms, 1.21 kB]
 #> + rows_as_files dispatched
-#> INFO [2025-09-15 00:12:48] Identify rows of new, updated and/or outdated property info + update tracked files.
-#> INFO [2025-09-15 00:12:48] ids_new_or_changed_rows: 100
-#> INFO [2025-09-15 00:12:48] new_or_updated_files: 100
-#> INFO [2025-09-15 00:12:48] deleted_files: 0
-#> ✔ rows_as_files completed [179ms, 1.91 kB]
+#> INFO [2025-09-15 00:43:12] Identify rows of new, updated and/or outdated property info + update tracked files.
+#> INFO [2025-09-15 00:43:12] ids_new_or_changed_rows: 100
+#> INFO [2025-09-15 00:43:13] new_or_updated_files: 100
+#> INFO [2025-09-15 00:43:13] deleted_files: 0
+#> ✔ rows_as_files completed [187ms, 1.91 kB]
 #> + input_files dispatched
 #> ✔ input_files completed [0ms, 732 B]
 #> + input declared [100 branches]
 #> ✔ input completed [3ms, 16.45 kB]
 #> + whatever declared [100 branches]
-#> ✔ whatever completed [13ms, 16.45 kB]
-#> ✔ ended pipeline [1.6s, 203 completed, 0 skipped]
+#> ✔ whatever completed [22ms, 16.45 kB]
+#> ✔ ended pipeline [1.2s, 203 completed, 0 skipped]
 #> # A tibble: 100 × 2
 #>    package   downloads
 #>    <chr>     <chr>    

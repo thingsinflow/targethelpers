@@ -16,13 +16,16 @@ knitr::opts_chunk$set(
 # targethelpers
 
 <!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/targethelpers)](https://CRAN.R-project.org/package=targethelpers)
+[![Codecov test coverage](https://codecov.io/gh/thingsinflow/targethelpers/graph/badge.svg)](https://app.codecov.io/gh/thingsinflow/targethelpers)
+[![R-CMD-check](https://github.com/thingsinflow/targethelpers/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thingsinflow/targethelpers/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-A simple package that provides some extra functions which I have found to be useful when creating {targets}/{tarchetypes} pipelines for scraping data from websites.
+A simple package that provides some extra functions which I have found to be useful when creating `targets`/`tarchetypes` pipelines for scraping data from websites.
 
 ## Features
 
-Currently the {targethelpers} package only implement the two functions listed below.
+Currently the `targethelpers` package only implement the two functions listed below.
 
 More functions will probably be added later on as the need arises.
 
@@ -44,7 +47,7 @@ More functions will probably be added later on as the need arises.
 
 ## Installation
 
-You can install the development version of targethelpers from [GitHub](https://github.com/) with:
+You can install the development version of `targethelpers` from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("pak")
@@ -53,7 +56,7 @@ pak::pak("thingsinflow/targethelpers")
 
 ## Example
 
-This is a basic example which shows how to use `targethelpers::rows_to_files()` as part of an automated `targets` pipeline that saves and maintains each row of a data frame as a separate file that is then monitored automatically downstream:
+This is a basic example which shows how to use `targethelpers::rows_to_files()` as part of an automated `targets` pipeline that saves and maintains each row of a data frame as a separate file that can then be monitored automatically downstream:
 
 ```{r example}
 library(targethelpers)

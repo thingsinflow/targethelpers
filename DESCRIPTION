@@ -1,10 +1,13 @@
 Package: targethelpers
-Title: What the Package Does (One Line, Title Case)
+Title: Helpers For Scraping Webdata Using Targets Pipelines 
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+    person("Niels", "Dam", "Ole", "nd@thingsinflow.dk", role = c("aut", "cre"))
+Description: A simple package that provides some extra functions which I have found 
+    to be useful when creating `targets`/`tarchetypes` pipelines for scraping data 
+    from websites. Currently only a few functions are implemented for converting 
+    data frame rows to individual files, syncing changes by updating only modified 
+    rows and cleaning up obsolete files. Useful when scraping webdata.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
