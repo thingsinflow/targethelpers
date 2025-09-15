@@ -10,6 +10,8 @@ status](https://www.r-pkg.org/badges/version/targethelpers)](https://CRAN.R-proj
 [![Codecov test
 coverage](https://codecov.io/gh/thingsinflow/targethelpers/graph/badge.svg)](https://app.codecov.io/gh/thingsinflow/targethelpers)
 [![R-CMD-check](https://github.com/thingsinflow/targethelpers/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thingsinflow/targethelpers/actions/workflows/R-CMD-check.yaml)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
 A simple package that provides some extra functions which I have found
@@ -98,20 +100,20 @@ targets::tar_dir({
   targets::tar_read(whatever)
 })
 #> + data dispatched
-#> ✔ data completed [399ms, 1.21 kB]
+#> ✔ data completed [843ms, 1.21 kB]
 #> + rows_as_files dispatched
-#> INFO [2025-09-15 00:43:12] Identify rows of new, updated and/or outdated property info + update tracked files.
-#> INFO [2025-09-15 00:43:12] ids_new_or_changed_rows: 100
-#> INFO [2025-09-15 00:43:13] new_or_updated_files: 100
-#> INFO [2025-09-15 00:43:13] deleted_files: 0
-#> ✔ rows_as_files completed [187ms, 1.91 kB]
+#> INFO [2025-09-15 16:15:26] Identify rows of new, updated and/or outdated property info + update tracked files.
+#> INFO [2025-09-15 16:15:27] ids_new_or_changed_rows: 100
+#> INFO [2025-09-15 16:15:27] new_or_updated_files: 100
+#> INFO [2025-09-15 16:15:27] deleted_files: 0
+#> ✔ rows_as_files completed [167ms, 1.91 kB]
 #> + input_files dispatched
 #> ✔ input_files completed [0ms, 732 B]
 #> + input declared [100 branches]
-#> ✔ input completed [3ms, 16.45 kB]
+#> ✔ input completed [1ms, 16.45 kB]
 #> + whatever declared [100 branches]
-#> ✔ whatever completed [22ms, 16.45 kB]
-#> ✔ ended pipeline [1.2s, 203 completed, 0 skipped]
+#> ✔ whatever completed [17ms, 16.45 kB]
+#> ✔ ended pipeline [1.5s, 203 completed, 0 skipped]
 #> # A tibble: 100 × 2
 #>    package   downloads
 #>    <chr>     <chr>    

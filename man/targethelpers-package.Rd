@@ -6,7 +6,7 @@
 \alias{targethelpers-package}
 \title{targethelpers: Helpers For Scraping Webdata Using Targets Pipelines}
 \description{
-Miscellaneous helper functions for building pipelines using the Targets/Tarchetypes packages. Currently only a few functions are implemented for converting data frame rows to individual files, syncing changes by updating only modified rows and cleaning up obsolete files. Useful when scraping webdata.
+`r lifecycle::badge('experimental')` Miscellaneous helper functions for building pipelines using the Targets/Tarchetypes packages. Currently only a few functions are implemented for converting data frame rows to individual files, syncing changes by updating only modified rows and cleaning up obsolete files. Useful when scraping webdata.
 }
 \author{
 \strong{Maintainer}: Niels Ole Dam \email{nd@thingsinflow.dk}
