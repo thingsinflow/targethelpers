@@ -15,8 +15,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 <!-- badges: end -->
 
 A simple package that provides some extra functions which I have found
-to be useful when creating `targets`/`tarchetypes` pipelines for
-scraping data from websites.
+to be useful when creating `targets`/`tarchetypes` pipelines for a
+rather unusual purpose: scraping ephemeral data from websites.
 
 ## Features
 
@@ -27,18 +27,18 @@ More functions will probably be added later on as the need arises.
 
 ### File Management Helpers
 
-`add_filepaths_to_df`
+`add_filepaths_to_df(data_df, id_col_name, path, file_prefix, extension)`
 
 > Returns the input dataframe with a `filepath` row added.
 
-`rows_to_files`
+`rows_to_files(data_df, cols_not_to_compare, id_col_name, path, file_prefix, extension)`
 
 > When you scrape websites you only want to scrape and process the data,
 > when it has changed. This function takes the input dataframe (with a
 > `filepath` row added) and saves each row as a separate file. On the
 > following runs the function: - adds new rows as files (if any). -
 > updates the files of existing rows that have changed (if any). -
-> deletes files whose rows are not present in the datafram any more (if
+> deletes files whose rows are not present in the dataframe any more (if
 > any). The output of the function is a summary of the above changes (if
 > any) as well as a list of the files currently present. The output file
 > list is typically used as input for a regular `tarchetypes::tar_files`
@@ -100,32 +100,32 @@ targets::tar_dir({
   targets::tar_read(whatever)
 })
 #> + data dispatched
-#> ✔ data completed [843ms, 1.21 kB]
+#> ✔ data completed [644ms, 1.21 kB]
 #> + rows_as_files dispatched
-#> INFO [2025-09-15 16:15:26] Identify rows of new, updated and/or outdated property info + update tracked files.
-#> INFO [2025-09-15 16:15:27] ids_new_or_changed_rows: 100
-#> INFO [2025-09-15 16:15:27] new_or_updated_files: 100
-#> INFO [2025-09-15 16:15:27] deleted_files: 0
-#> ✔ rows_as_files completed [167ms, 1.91 kB]
+#> INFO [2025-09-15 21:30:06] Identify rows of new, updated and/or outdated property info + update tracked files.
+#> INFO [2025-09-15 21:30:06] ids_new_or_changed_rows: 100
+#> INFO [2025-09-15 21:30:06] new_or_updated_files: 100
+#> INFO [2025-09-15 21:30:06] deleted_files: 0
+#> ✔ rows_as_files completed [156ms, 1.91 kB]
 #> + input_files dispatched
-#> ✔ input_files completed [0ms, 732 B]
+#> ✔ input_files completed [0ms, 737 B]
 #> + input declared [100 branches]
 #> ✔ input completed [1ms, 16.45 kB]
 #> + whatever declared [100 branches]
-#> ✔ whatever completed [17ms, 16.45 kB]
-#> ✔ ended pipeline [1.5s, 203 completed, 0 skipped]
+#> ✔ whatever completed [18ms, 16.45 kB]
+#> ✔ ended pipeline [1.3s, 203 completed, 0 skipped]
 #> # A tibble: 100 × 2
 #>    package   downloads
 #>    <chr>     <chr>    
-#>  1 tibble    1641093  
-#>  2 rlang     1621703  
-#>  3 ggplot2   1613778  
-#>  4 lifecycle 1579966  
-#>  5 cli       1557633  
-#>  6 dplyr     1491532  
-#>  7 rmarkdown 1485997  
-#>  8 glue      1405902  
-#>  9 vctrs     1351467  
-#> 10 purrr     1331811  
+#>  1 tibble    1640635  
+#>  2 rlang     1616106  
+#>  3 ggplot2   1609534  
+#>  4 lifecycle 1576817  
+#>  5 cli       1554412  
+#>  6 dplyr     1488631  
+#>  7 rmarkdown 1485582  
+#>  8 glue      1402521  
+#>  9 vctrs     1346809  
+#> 10 purrr     1340272  
 #> # ℹ 90 more rows
 ```
