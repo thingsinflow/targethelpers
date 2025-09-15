@@ -4,12 +4,12 @@
 \name{targethelpers-package}
 \alias{targethelpers}
 \alias{targethelpers-package}
-\title{targethelpers: What the Package Does (One Line, Title Case)}
+\title{targethelpers: Helpers For Scraping Webdata Using Targets Pipelines}
 \description{
-What the package does (one paragraph).
+Miscellaneous helper functions for building pipelines using the Targets/Tarchetypes packages. Currently only a few functions are implemented for converting data frame rows to individual files, syncing changes by updating only modified rows and cleaning up obsolete files. Useful when scraping webdata.
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Niels Ole Dam \email{nd@thingsinflow.dk}
 
 }
 \keyword{internal}

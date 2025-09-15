@@ -23,8 +23,7 @@ comparison (default is \code{"images"}).}
 
 \item{id_col_name}{Name of the unique identifier column (default \code{"id"}).}
 
-\item{path}{Directory containing existing files (default
-\code{"data_in/boliga_current"}).}
+\item{path}{Directory containing existing files.}
 
 \item{file_prefix}{Prefix used for the filenames (default \code{"estate"}).}
 

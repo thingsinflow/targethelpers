@@ -25,6 +25,7 @@
 #' @importFrom purrr walk
 #' @importFrom qs2 qs_read
 #' @importFrom rlang .data
+#' @importFrom stringr fixed
 #' @importFrom stringr str_remove
 #' @importFrom tarchetypes tar_files
 #' @importFrom targets tar_target

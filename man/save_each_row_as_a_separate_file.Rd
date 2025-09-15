@@ -7,7 +7,7 @@
 save_each_row_as_a_separate_file(
   data_to_save_df_w_filepaths,
   id_col_name = "id",
-  path = "data_in/files",
+  path = file.path("data_in", "files"),
   file_prefix = "file",
   extension = ".qs2"
 )
@@ -19,7 +19,7 @@ a \code{file_path} column specifying the output file for each row.}
 \item{id_col_name}{Name of the unique identifier column (default \code{"id"}).}
 
 \item{path}{Directory where files should be saved (default
-\code{"data_in/boliga_current"}).}
+\code{"data_in/files"}).}
 
 \item{file_prefix}{Prefix used for the filenames (default \code{"estate"}).}
 

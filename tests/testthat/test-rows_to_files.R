@@ -194,29 +194,32 @@ test_that("handles empty directory gracefully", {
 
 test_that("adds file_path column with correct paths", {
     df <- tibble::tibble(id = c(10, 20))
+    path <- file.path("data", "files")
     res <- add_filepaths_to_df(df, id_col_name = "id",
-                               path = "/data/files",
+                               path = path,
                                file_prefix = "sample")
     expect_true("file_path" %in% names(res))
     expect_equal(res$file_path,
-                 c(file.path("/data/files", "sample_10.qs2"),
-                   file.path("/data/files", "sample_20.qs2")))
+                 c(file.path(path, "sample_10.qs2"),
+                   file.path(path, "sample_20.qs2")))
 })
 
 test_that("uses default extension when none supplied", {
     df <- tibble::tibble(id = 1)
+    path <- file.path("tmp")
     res <- add_filepaths_to_df(df, id_col_name = "id",
-                               path = "/tmp",
+                               path = path,
                                file_prefix = "x")
     expect_equal(res$file_path,
-                 file.path("/tmp", "x_1.qs2"))
+                 file.path(path, "x_1.qs2"))
 })
 
 test_that("errors when id column missing", {
     df <- tibble::tibble(other = 1:3)
+    path <- file.path("tmp")
     expect_snapshot(
         add_filepaths_to_df(df, id_col_name = "id",
-                            path = "/tmp",
+                            path = path,
                             file_prefix = "p"),
         error = TRUE
     )
@@ -308,7 +311,7 @@ test_that("deletes files for removed rows", {
     df_new <- df[-3, ]   # remove id 3
     res_del <- rows_to_files(df_new, path = tmp_path)
     expect_equal(length(res_del$deleted_files), 1L)
-    expect_true(file.exists(paste0(tmp_path,"/item_3.qs2")) == FALSE)
+    expect_true(file.exists(file.path(tmp_path,"item_3.qs2")) == FALSE)
 })
 
 test_that("supports custom id_col_name and file_prefix", {

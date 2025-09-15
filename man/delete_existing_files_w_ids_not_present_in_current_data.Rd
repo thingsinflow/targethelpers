@@ -6,7 +6,7 @@
 \usage{
 delete_existing_files_w_ids_not_present_in_current_data(
   new_data_df_w_filepaths,
-  path = "data_in/files",
+  path = file.path("data_in", "files"),
   file_prefix = "file",
   extension = ".qs2"
 )
@@ -16,7 +16,7 @@ delete_existing_files_w_ids_not_present_in_current_data(
 unique \code{file_path} column value for each row.}
 
 \item{path}{Directory containing existing files (default
-\code{"data_in/boliga_current"}).}
+\code{"data_in/files"}).}
 
 \item{file_prefix}{Prefix used for the filenames (default \code{"estate"}).}
 

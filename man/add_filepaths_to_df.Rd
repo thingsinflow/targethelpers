@@ -37,6 +37,6 @@ from the identifier column, and a file extension.
 }
 \examples{
   df <- tibble::tibble(id = 1:3)
-  add_filepaths_to_df(df, id_col_name = "id", path = "/data/files",
+  add_filepaths_to_df(df, id_col_name = "id", path = file.path("data_in", "files"),
                       file_prefix = "sample")
 }

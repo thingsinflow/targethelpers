@@ -103,8 +103,7 @@ compare_rows <- function(df1, df2, id = "id") {
 #' @param cols_not_to_compare Character vector of columns to exclude from
 #'   comparison (default is `"images"`).
 #' @param id_col_name Name of the unique identifier column (default `"id"`).
-#' @param path Directory containing existing files (default
-#'   `"data_in/boliga_current"`).
+#' @param path Directory containing existing files.
 #' @param file_prefix Prefix used for the filenames (default `"estate"`).
 #' @param extension File extension to match - must be either `".qs2"` or
 #'   `".parquet"` (default `".qs2"`).
@@ -206,7 +205,7 @@ compare_with_existing_files <- function(new_data_df_w_filepaths,
 #'   a `file_path` column specifying the output file for each row.
 #' @param id_col_name Name of the unique identifier column (default `"id"`).
 #' @param path Directory where files should be saved (default
-#'   `"data_in/boliga_current"`).
+#'   `"data_in/files"`).
 #' @param file_prefix Prefix used for the filenames (default `"estate"`).
 #' @param extension File extension to match - must be either `".qs2"` or
 #'   `".parquet"` (default `".qs2"`).
@@ -246,7 +245,7 @@ compare_with_existing_files <- function(new_data_df_w_filepaths,
 #'   [delete_existing_files_w_ids_not_present_in_current_data()]
 save_each_row_as_a_separate_file <- function(data_to_save_df_w_filepaths,
                                              id_col_name = "id",
-                                             path = "data_in/files",
+                                             path = file.path("data_in", "files"),
                                              file_prefix = "file",
                                              extension = ".qs2") {
 
@@ -277,7 +276,7 @@ save_each_row_as_a_separate_file <- function(data_to_save_df_w_filepaths,
 #' @param new_data_df_w_filepaths Data frame containing the current data with a
 #'   unique `file_path` column value for each row.
 #' @param path Directory containing existing files (default
-#'   `"data_in/boliga_current"`).
+#'   `"data_in/files"`).
 #' @param file_prefix Prefix used for the filenames (default `"estate"`).
 #' @param extension File extension to match - must be either `".qs2"` or
 #'   `".parquet"` (default `".qs2"`).
@@ -317,7 +316,7 @@ save_each_row_as_a_separate_file <- function(data_to_save_df_w_filepaths,
 #'   [delete_existing_files_w_ids_not_present_in_current_data()]
 delete_existing_files_w_ids_not_present_in_current_data <- function(new_data_df_w_filepaths,
                                                                     # id_col_name = "id",
-                                                                    path = "data_in/files",
+                                                                    path = file.path("data_in", "files"),
                                                                     file_prefix = "file",
                                                                     extension = ".qs2") {
     files_to_delete <- NULL
@@ -329,7 +328,7 @@ delete_existing_files_w_ids_not_present_in_current_data <- function(new_data_df_
         #     rows_update(tibble(!!id_col_name := 2111662, propertyType = 39), by = id_col_name) |>
         #     filter(!!rlang::sym(id_col_name) != 2111671)
         new_files <- new_data_df_w_filepaths |>
-            mutate(file_name = .data$file_path |> str_remove(path) |> str_remove(paste0("^\\", .Platform$file.sep))) |>
+            mutate(file_name = .data$file_path |> str_remove(fixed(path)) |> str_remove(fixed(.Platform$file.sep))) |>
             pull(.data$file_name)
         # ...delete the files
         files_to_delete <- setdiff(existing_files, new_files)
@@ -366,7 +365,7 @@ delete_existing_files_w_ids_not_present_in_current_data <- function(new_data_df_
 #'
 #' @examples
 #'   df <- tibble::tibble(id = 1:3)
-#'   add_filepaths_to_df(df, id_col_name = "id", path = "/data/files",
+#'   add_filepaths_to_df(df, id_col_name = "id", path = file.path("data_in", "files"),
 #'                       file_prefix = "sample")
 add_filepaths_to_df <- function(data_df,
                                 id_col_name = "id",
