@@ -33,7 +33,7 @@
 # errors when id column missing
 
     Code
-      add_filepaths_to_df(df, id_col_name = "id", path = "/tmp", file_prefix = "p")
+      add_filepaths_to_df(df, id_col_name = "id", path = path, file_prefix = "p")
     Condition
       Error in `mutate()`:
       i In argument: `file_path = `%>%`(...)`.
