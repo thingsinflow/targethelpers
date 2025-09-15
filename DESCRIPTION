@@ -2,7 +2,7 @@ Package: targethelpers
 Title: Helpers For Scraping Webdata Using Targets Pipelines 
 Version: 0.0.0.9000
 Authors@R: 
-    person("Niels", "Dam", "Ole", "nd@thingsinflow.dk", role = c("aut", "cre"))
+    person("Niels Ole", "Dam", email = "nd@thingsinflow.dk", role = c("aut", "cre"))
 Description: Miscellaneous helper functions for building pipelines using the 
     Targets/Tarchetypes packages. Currently only a few functions are implemented 
     for converting data frame rows to individual files, syncing changes by 
