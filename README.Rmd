@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-A simple package that provides some extra functions which I have found to be useful when creating `targets`/`tarchetypes` pipelines for a rather unusual purpose: scraping ephemeral data from websites.
+A simple package that provides some extra functions which I have found to be useful when creating [`targets`](https://docs.ropensci.org/targets/)/[`tarchetypes`](https://docs.ropensci.org/tarchetypes/index.html) pipelines for a rather unusual purpose: scraping ephemeral data from websites.
 
 ## Features
 
