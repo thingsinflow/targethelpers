@@ -61,7 +61,7 @@ pak::pak("thingsinflow/targethelpers")
 This is a basic example which shows how to use
 `targethelpers::rows_to_files()` as part of an automated `targets`
 pipeline that saves and maintains each row of a data frame as a separate
-file that can then be monitored automatically downstream:
+file that can then be monitored automatically further down the pipeline:
 
 ``` r
 library(targethelpers)
@@ -104,19 +104,19 @@ targets::tar_dir({
   targets::tar_read(whatever)
 })
 #> + data dispatched
-#> ✔ data completed [703ms, 1.21 kB]
+#> ✔ data completed [722ms, 1.21 kB]
 #> + rows_as_files dispatched
-#> INFO [2025-09-16 19:45:24] Identify rows of new, updated and/or outdated property info + update tracked files.
-#> INFO [2025-09-16 19:45:24] ids_new_or_changed_rows: 100
-#> INFO [2025-09-16 19:45:24] new_or_updated_files: 100
-#> INFO [2025-09-16 19:45:24] deleted_files: 0
-#> ✔ rows_as_files completed [166ms, 1.92 kB]
+#> INFO [2025-09-16 22:00:40] Identify rows of new, updated and/or outdated property info + update tracked files.
+#> INFO [2025-09-16 22:00:40] ids_new_or_changed_rows: 100
+#> INFO [2025-09-16 22:00:40] new_or_updated_files: 100
+#> INFO [2025-09-16 22:00:40] deleted_files: 0
+#> ✔ rows_as_files completed [158ms, 1.92 kB]
 #> + input_files dispatched
 #> ✔ input_files completed [0ms, 738 B]
 #> + input declared [100 branches]
-#> ✔ input completed [1ms, 16.45 kB]
+#> ✔ input completed [3ms, 16.45 kB]
 #> + whatever declared [100 branches]
-#> ✔ whatever completed [14ms, 16.45 kB]
+#> ✔ whatever completed [13ms, 16.45 kB]
 #> ✔ ended pipeline [1.4s, 203 completed, 0 skipped]
 #> # A tibble: 100 × 2
 #>    package   downloads

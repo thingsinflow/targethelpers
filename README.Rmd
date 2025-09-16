@@ -57,7 +57,7 @@ pak::pak("thingsinflow/targethelpers")
 
 ## Example
 
-This is a basic example which shows how to use `targethelpers::rows_to_files()` as part of an automated `targets` pipeline that saves and maintains each row of a data frame as a separate file that can then be monitored automatically downstream:
+This is a basic example which shows how to use `targethelpers::rows_to_files()` as part of an automated `targets` pipeline that saves and maintains each row of a data frame as a separate file that can then be monitored automatically further down the pipeline:
 
 ```{r example}
 library(targethelpers)
