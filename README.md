@@ -81,9 +81,11 @@ targets::tar_dir({
       tar_target(
         name = rows_as_files,
         command = data |>
+          # Convert each row to a file and delete files for rows that is no longer present
           targethelpers::rows_to_files(id_col_name = "package", extension = ".rds"),
         format = "rds"
       ),
+      # Monitor the input files using a regular tarchetypes::tar_files() step
       tar_files(
         name = input,
         command = rows_as_files$data_df_w_filepaths$file_path
@@ -102,32 +104,32 @@ targets::tar_dir({
   targets::tar_read(whatever)
 })
 #> + data dispatched
-#> ✔ data completed [700ms, 1.21 kB]
+#> ✔ data completed [703ms, 1.21 kB]
 #> + rows_as_files dispatched
-#> INFO [2025-09-16 19:21:01] Identify rows of new, updated and/or outdated property info + update tracked files.
-#> INFO [2025-09-16 19:21:01] ids_new_or_changed_rows: 100
-#> INFO [2025-09-16 19:21:01] new_or_updated_files: 100
-#> INFO [2025-09-16 19:21:01] deleted_files: 0
-#> ✔ rows_as_files completed [167ms, 1.91 kB]
+#> INFO [2025-09-16 19:45:24] Identify rows of new, updated and/or outdated property info + update tracked files.
+#> INFO [2025-09-16 19:45:24] ids_new_or_changed_rows: 100
+#> INFO [2025-09-16 19:45:24] new_or_updated_files: 100
+#> INFO [2025-09-16 19:45:24] deleted_files: 0
+#> ✔ rows_as_files completed [166ms, 1.92 kB]
 #> + input_files dispatched
-#> ✔ input_files completed [0ms, 737 B]
+#> ✔ input_files completed [0ms, 738 B]
 #> + input declared [100 branches]
-#> ✔ input completed [5ms, 16.45 kB]
+#> ✔ input completed [1ms, 16.45 kB]
 #> + whatever declared [100 branches]
-#> ✔ whatever completed [15ms, 16.45 kB]
+#> ✔ whatever completed [14ms, 16.45 kB]
 #> ✔ ended pipeline [1.4s, 203 completed, 0 skipped]
 #> # A tibble: 100 × 2
 #>    package   downloads
 #>    <chr>     <chr>    
-#>  1 tibble    1640635  
-#>  2 rlang     1616106  
-#>  3 ggplot2   1609534  
-#>  4 lifecycle 1576817  
-#>  5 cli       1554412  
-#>  6 dplyr     1488631  
-#>  7 rmarkdown 1485582  
-#>  8 glue      1402521  
-#>  9 vctrs     1346809  
-#> 10 purrr     1340272  
+#>  1 tibble    1676553  
+#>  2 rlang     1659023  
+#>  3 ggplot2   1652946  
+#>  4 lifecycle 1613399  
+#>  5 cli       1597367  
+#>  6 dplyr     1524490  
+#>  7 rmarkdown 1510541  
+#>  8 glue      1437502  
+#>  9 purrr     1380803  
+#> 10 vctrs     1379787  
 #> # ℹ 90 more rows
 ```

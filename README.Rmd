@@ -77,9 +77,11 @@ targets::tar_dir({
       tar_target(
         name = rows_as_files,
         command = data |>
+          # Convert each row to a file and delete files for rows that is no longer present
           targethelpers::rows_to_files(id_col_name = "package", extension = ".rds"),
         format = "rds"
       ),
+      # Monitor the input files using a regular tarchetypes::tar_files() step
       tar_files(
         name = input,
         command = rows_as_files$data_df_w_filepaths$file_path
