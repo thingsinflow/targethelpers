@@ -104,6 +104,29 @@ test_that("ignores specified columns in comparison", {
     expect_equal(res, 2L)
 })
 
+test_that("no debug logging when no changes or not in debug mode", {
+    temp_dir <- tempfile()
+    dir.create(temp_dir)
+    file_path <- file.path(temp_dir, "estate_2.qs2")
+    writeLines("", con = file_path) # dummy file
+    new_df <- tibble::tibble(id = 2, name = "new", file_path = file_path)
+
+    log_calls <- list()
+    testthat::local_mocked_bindings(
+        map_df = function(x, ...) data.frame(id = 3, name = "old"),
+        compare_rows = function(old, new) {
+            tibble::tibble(id = integer(0), changed_cols = character(0))
+        },
+        log_threshold = function() as.loglevel("INFO"),
+        as.loglevel = function(x) x,
+        log_debug = function(...) log_calls <<- c(log_calls, list(list(...)))
+    )
+
+    ids <- compare_with_existing_files(new_df, path = temp_dir, file_prefix = "estate", extension = ".qs2")
+    expect_equal(ids, 2)
+    expect_length(log_calls, 0)
+})
+
 
 # save_each_row_as_a_separate_file ---------------------------------------------
 
@@ -227,6 +250,19 @@ test_that("errors when id column missing", {
 
 
 # rows_to_files ----------------------------------------------------------------
+
+test_that("creates directory when missing", {
+    testthat::local_mocked_bindings(
+        log_info = function(...) NULL
+    )
+    tmp <- withr::local_tempdir()
+    dir_that_should_be_automatically_created <- file.path(tmp, "data_in")
+    on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+    expect_false(dir.exists(dir_that_should_be_automatically_created))
+    rows_to_files(data_df = data.frame(id = 1, x = "a"),
+                  path = dir_that_should_be_automatically_created)
+    expect_true(dir.exists(dir_that_should_be_automatically_created))
+})
 
 test_that("writes all rows as new files", {
     testthat::local_mocked_bindings(
