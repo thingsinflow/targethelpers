@@ -1,6 +1,6 @@
 # Helper functions for the converting and managing the rows of a data frame as a
 # collection of separate files.
-# Only the two last functions are exported, the rest are private helper function.
+# Only the two last functions are exported, the rest are private helper functions.
 # By Niels Ole Dam, Sept 2025
 
 
