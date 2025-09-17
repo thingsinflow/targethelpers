@@ -8,7 +8,7 @@
 [![CRAN
 status](https://www.r-pkg.org/badges/version/targethelpers)](https://CRAN.R-project.org/package=targethelpers)
 [![Codecov test
-coverage](https://codecov.io/gh/thingsinflow/targethelpers/graph/badge.svg)](https://app.codecov.io/gh/thingsinflow/targethelpers)
+coverage](https://codecov.io/gh/thingsinflow/targethelpers/graph/badge.svg?token=GX47AQ8FVA)](https://app.codecov.io/gh/thingsinflow/targethelpers)
 [![R-CMD-check](https://github.com/thingsinflow/targethelpers/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thingsinflow/targethelpers/actions/workflows/R-CMD-check.yaml)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
@@ -104,20 +104,20 @@ targets::tar_dir({
   targets::tar_read(whatever)
 })
 #> + data dispatched
-#> ✔ data completed [722ms, 1.21 kB]
+#> ✔ data completed [680ms, 1.21 kB]
 #> + rows_as_files dispatched
-#> INFO [2025-09-16 22:00:40] Identify rows of new, updated and/or outdated property info + update tracked files.
-#> INFO [2025-09-16 22:00:40] ids_new_or_changed_rows: 100
-#> INFO [2025-09-16 22:00:40] new_or_updated_files: 100
-#> INFO [2025-09-16 22:00:40] deleted_files: 0
-#> ✔ rows_as_files completed [158ms, 1.92 kB]
+#> INFO [2025-09-17 13:25:08] Identify rows of new, updated and/or outdated property info + update tracked files.
+#> INFO [2025-09-17 13:25:08] ids_new_or_changed_rows: 100
+#> INFO [2025-09-17 13:25:08] new_or_updated_files: 100
+#> INFO [2025-09-17 13:25:08] deleted_files: 0
+#> ✔ rows_as_files completed [161ms, 1.92 kB]
 #> + input_files dispatched
-#> ✔ input_files completed [0ms, 738 B]
+#> ✔ input_files completed [1ms, 738 B]
 #> + input declared [100 branches]
-#> ✔ input completed [3ms, 16.45 kB]
+#> ✔ input completed [7ms, 16.45 kB]
 #> + whatever declared [100 branches]
-#> ✔ whatever completed [13ms, 16.45 kB]
-#> ✔ ended pipeline [1.4s, 203 completed, 0 skipped]
+#> ✔ whatever completed [23ms, 16.45 kB]
+#> ✔ ended pipeline [1.5s, 203 completed, 0 skipped]
 #> # A tibble: 100 × 2
 #>    package   downloads
 #>    <chr>     <chr>    
