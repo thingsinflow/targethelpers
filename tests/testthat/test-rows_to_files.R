@@ -127,6 +127,23 @@ test_that("no debug logging when no changes or not in debug mode", {
     expect_length(log_calls, 0)
 })
 
+test_that("debug logging when changes and in debug mode", {
+    temp_path <- withr::local_tempdir()
+    qs2::qs_save(tibble::tibble(id = 1L, val = "a"), file.path(temp_path,"estate_1.qs2"))
+    qs2::qs_save(tibble::tibble(id = 2L, val = "b"), file.path(temp_path,"estate_2.qs2"))
+    new_df <- tibble::tibble(id = c(1L,2L), val = c("a","c") , file_path = c("estate_1.qs2", "estate_2.qs2"))
+
+    log_calls <- list()
+    testthat::local_mocked_bindings(
+        log_threshold = function() as.loglevel("DEBUG"),
+        log_debug = function(...) log_calls <<- c(log_calls, ...) |> paste(collapse = "\n")
+    )
+
+    ids <- compare_with_existing_files(new_df, path = temp_path, file_prefix = "estate")
+    expect_equal(ids, 2)
+    expect_match(log_calls, "\\{id_col_name\\}")
+})
+
 
 # save_each_row_as_a_separate_file ---------------------------------------------
 
