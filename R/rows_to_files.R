@@ -94,7 +94,7 @@ compare_rows <- function(df1, df2, id = "id") {
 #' change often (e.g., timestamps) can be specified as such and ignored during
 #' comparison.
 #'
-#' @param new_data_df_w_filepaths A data frame containing the current data and a
+#' @param new_data_w_file_paths A data frame containing the current data and a
 #'   `file_path` column that points to where each row should be stored as
 #'   separate files.
 #' @param cols_not_to_compare Character vector of columns to exclude from
@@ -142,7 +142,7 @@ compare_rows <- function(df1, df2, id = "id") {
 #' @seealso These functions are designed to work together, see details above:
 #'   [compare_with_existing_files()], [save_each_row_as_a_separate_file()],
 #'   [delete_existing_files_w_ids_not_present_in_current_data()]
-compare_with_existing_files <- function(new_data_df_w_filepaths,
+compare_with_existing_files <- function(new_data_w_file_paths,
                                         cols_not_to_compare = c(), # i.e. cols that always contain the current datetime but no other changes etc.
                                         id_col_name = "id",
                                         path,
@@ -150,7 +150,7 @@ compare_with_existing_files <- function(new_data_df_w_filepaths,
                                         extension = ".qs2") {
 
     # Make sure we're working on a tibble
-    new_data_df_w_filepaths <- new_data_df_w_filepaths |> as_tibble()
+    new_data_w_file_paths <- new_data_w_file_paths |> as_tibble()
 
     # Set read function to use
     read_func <- switch (extension,
@@ -168,7 +168,7 @@ compare_with_existing_files <- function(new_data_df_w_filepaths,
             # map_df(readRDS)
             # map_df(qs_read)
             map_df(read_func)
-        ids_new_or_changed_rows <- dplyr::setdiff(new_data_df_w_filepaths |>
+        ids_new_or_changed_rows <- dplyr::setdiff(new_data_w_file_paths |>
                                                       select(-"file_path",
                                                              -any_of(cols_not_to_compare)),
                                                   old_data |>
@@ -180,7 +180,7 @@ compare_with_existing_files <- function(new_data_df_w_filepaths,
         if (length(ids_new_or_changed_rows) > 0) {
             changes <- compare_rows(old_data |> select(-any_of(cols_not_to_compare)) |>
                                         filter(.data[[id_col_name]] %in% ids_new_or_changed_rows),
-                                    new_data_df_w_filepaths |>
+                                    new_data_w_file_paths |>
                                         select(-"file_path",
                                                -any_of(cols_not_to_compare)) |>
                                         filter(.data[[id_col_name]] %in% ids_new_or_changed_rows)
@@ -204,13 +204,13 @@ compare_with_existing_files <- function(new_data_df_w_filepaths,
 
             changes <- changes %>%
                 mutate(old = purrr::map2_chr(.data[["id"]], .data[["changed_cols"]], ~lookup_col_value(old_data,                id_col_name, .x, .y) |> toJSON()),
-                       new = purrr::map2_chr(.data[["id"]], .data[["changed_cols"]], ~lookup_col_value(new_data_df_w_filepaths, id_col_name, .x, .y) |> toJSON()))
+                       new = purrr::map2_chr(.data[["id"]], .data[["changed_cols"]], ~lookup_col_value(new_data_w_file_paths, id_col_name, .x, .y) |> toJSON()))
 
             if (nrow(changes) == 0) changes <- NULL
         }
     }
 
-    if (!exists("ids_new_or_changed_rows")) ids_new_or_changed_rows <- new_data_df_w_filepaths[[id_col_name]]
+    if (!exists("ids_new_or_changed_rows")) ids_new_or_changed_rows <- new_data_w_file_paths[[id_col_name]]
     if (!exists("changes"))                                 changes <- NULL
 
     # Return a list of ids of all the new or changed rows and summary (compared to existing file data)
@@ -294,10 +294,10 @@ save_each_row_as_a_separate_file <- function(data_to_save_df_w_filepaths,
 #' Delete Files for Removed Rows
 #'
 #' Removes files from `path` that correspond to IDs no longer present in the
-#' current dataset (`new_data_df_w_filepaths`). File names are derived from the
+#' current dataset (`new_data_w_file_paths`). File names are derived from the
 #' `file_path` column.
 #'
-#' @param new_data_df_w_filepaths Data frame containing the current data with a
+#' @param new_data_w_file_paths Data frame containing the current data with a
 #'   unique `file_path` column value for each row.
 #' @param path Directory containing existing files (default
 #'   `"data_in/files"`).
@@ -338,7 +338,7 @@ save_each_row_as_a_separate_file <- function(data_to_save_df_w_filepaths,
 #' @seealso These functions are designed to work together, see details above:
 #'   [compare_with_existing_files()], [save_each_row_as_a_separate_file()],
 #'   [delete_existing_files_w_ids_not_present_in_current_data()]
-delete_existing_files_w_ids_not_present_in_current_data <- function(new_data_df_w_filepaths,
+delete_existing_files_w_ids_not_present_in_current_data <- function(new_data_w_file_paths,
                                                                     # id_col_name = "id",
                                                                     path = file.path("data_in", "files"),
                                                                     file_prefix = "file",
@@ -348,10 +348,10 @@ delete_existing_files_w_ids_not_present_in_current_data <- function(new_data_df_
     # Delete existing files for ids not present in the current dataset
     existing_files <- dir(path, paste0("^", file_prefix, "_.+", extension, "$"))
     if (!is_empty(existing_files)) {
-        # new_data_df_w_filepaths <- new_data_df_w_filepaths |>
+        # new_data_w_file_paths <- new_data_w_file_paths |>
         #     rows_update(tibble(!!id_col_name := 2111662, propertyType = 39), by = id_col_name) |>
         #     filter(!!rlang::sym(id_col_name) != 2111671)
-        new_files <- new_data_df_w_filepaths |>
+        new_files <- new_data_w_file_paths |>
             mutate(file_name = .data$file_path |> str_remove(fixed(path)) |> str_remove(fixed(.Platform$file.sep))) |>
             pull(.data$file_name)
         # ...delete the files
@@ -397,9 +397,9 @@ add_filepaths_to_df <- function(data_df,
                                 file_prefix,
                                 extension = ".qs2"
 ) {
-    data_df_w_filepaths <- data_df |>
+    data_w_file_paths <- data_df |>
         mutate(file_path = .data[[id_col_name]] %>% map_chr(~file.path(path, paste0(file_prefix, "_", ., extension))))
-    return(data_df_w_filepaths)
+    return(data_w_file_paths)
 }
 
 
@@ -429,7 +429,7 @@ add_filepaths_to_df <- function(data_df,
 #'
 #' @return A list with five components that summarises the actions taken:
 #' \describe{
-#'   \item{data_df_w_filepaths}{Data frame augmented with the full path of each row’s file.}
+#'   \item{data_w_file_paths}{Data frame augmented with the full path of each row’s file.}
 #'   \item{ids_new_or_changed_rows}{Vector of ids for rows that are new or have changed.}
 #'   \item{changes}{Data frame with summary of what has changed. Each row lists `id`, `changed_cols`, `old`, `new`, with `old` and `new` encoded as JSON.}
 #'   \item{new_or_updated_files}{Character vector of paths to files that were created or updated.}
@@ -513,7 +513,7 @@ add_filepaths_to_df <- function(data_df,
 #'     ),
 #'     tar_files(
 #'         name = input,
-#'         command = rows_as_files$data_df_w_filepaths$file_path
+#'         command = rows_as_files$data_w_file_paths$file_path
 #'     ),
 #'     tar_target(
 #'         name = whatever,
@@ -548,14 +548,14 @@ rows_as_files <- function(data_df,                   # The data rows to convert 
 
     log_info("Identify rows of new, updated and/or outdated property info + update tracked files.")
 
-    data_df_w_filepaths <- add_filepaths_to_df(data_df,
+    data_w_file_paths <- add_filepaths_to_df(data_df,
                                                id_col_name         = id_col_name,
                                                path                = path,
                                                file_prefix         = file_prefix,
                                                extension           = extension)
 
     # Identify new or changed rows of data
-    res <- compare_with_existing_files(data_df_w_filepaths,
+    res <- compare_with_existing_files(data_w_file_paths,
                                        cols_not_to_compare = cols_not_to_compare,
                                        id_col_name         = id_col_name,
                                        path                = path,
@@ -569,7 +569,7 @@ rows_as_files <- function(data_df,                   # The data rows to convert 
 
 
     # Save new or updated rows as separate files
-    new_or_updated_files <- save_each_row_as_a_separate_file(data_df_w_filepaths |>
+    new_or_updated_files <- save_each_row_as_a_separate_file(data_w_file_paths |>
                                                                  filter(.data[[id_col_name]] %in% ids_new_or_changed_rows),
                                                              id_col_name = id_col_name,
                                                              path        = path,
@@ -581,7 +581,7 @@ rows_as_files <- function(data_df,                   # The data rows to convert 
 
 
     # Delete old files for rows not longer in the data
-    deleted_files <- delete_existing_files_w_ids_not_present_in_current_data(data_df_w_filepaths,
+    deleted_files <- delete_existing_files_w_ids_not_present_in_current_data(data_w_file_paths,
                                                                              path        = path,
                                                                              file_prefix = file_prefix,
                                                                              extension   = extension)
@@ -590,7 +590,7 @@ rows_as_files <- function(data_df,                   # The data rows to convert 
 
 
     # Return summary of results for all the actions above
-    summary <- list(data_df_w_filepaths     = data_df_w_filepaths,
+    summary <- list(data_w_file_paths       = data_w_file_paths,
                     ids_new_or_changed_rows = ids_new_or_changed_rows,
                     changes                 = changes,
                     new_or_updated_files    = new_or_updated_files,

@@ -36,7 +36,7 @@ files. Defaults to ".qs2".}
 \value{
 A list with five components that summarises the actions taken:
 \describe{
-\item{data_df_w_filepaths}{Data frame augmented with the full path of each row’s file.}
+\item{data_w_file_paths}{Data frame augmented with the full path of each row’s file.}
 \item{ids_new_or_changed_rows}{Vector of ids for rows that are new or have changed.}
 \item{changes}{Data frame with summary of what has changed. Each row lists \code{id}, \code{changed_cols}, \code{old}, \code{new}, with \code{old} and \code{new} encoded as JSON.}
 \item{new_or_updated_files}{Character vector of paths to files that were created or updated.}
@@ -128,7 +128,7 @@ targets::tar_script({
     ),
     tar_files(
         name = input,
-        command = rows_as_files$data_df_w_filepaths$file_path
+        command = rows_as_files$data_w_file_paths$file_path
     ),
     tar_target(
         name = whatever,

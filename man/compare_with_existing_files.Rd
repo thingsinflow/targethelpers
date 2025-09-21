@@ -5,7 +5,7 @@
 \title{Compare New or Changed Rows with Existing Files}
 \usage{
 compare_with_existing_files(
-  new_data_df_w_filepaths,
+  new_data_w_file_paths,
   cols_not_to_compare = c(),
   id_col_name = "id",
   path,
@@ -14,7 +14,7 @@ compare_with_existing_files(
 )
 }
 \arguments{
-\item{new_data_df_w_filepaths}{A data frame containing the current data and a
+\item{new_data_w_file_paths}{A data frame containing the current data and a
 \code{file_path} column that points to where each row should be stored as
 separate files.}
 

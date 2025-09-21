@@ -5,14 +5,14 @@
 \title{Delete Files for Removed Rows}
 \usage{
 delete_existing_files_w_ids_not_present_in_current_data(
-  new_data_df_w_filepaths,
+  new_data_w_file_paths,
   path = file.path("data_in", "files"),
   file_prefix = "file",
   extension = ".qs2"
 )
 }
 \arguments{
-\item{new_data_df_w_filepaths}{Data frame containing the current data with a
+\item{new_data_w_file_paths}{Data frame containing the current data with a
 unique \code{file_path} column value for each row.}
 
 \item{path}{Directory containing existing files (default
@@ -28,7 +28,7 @@ A character vector of file paths that were deleted, or NULL if none.
 }
 \description{
 Removes files from \code{path} that correspond to IDs no longer present in the
-current dataset (\code{new_data_df_w_filepaths}). File names are derived from the
+current dataset (\code{new_data_w_file_paths}). File names are derived from the
 \code{file_path} column.
 }
 \details{

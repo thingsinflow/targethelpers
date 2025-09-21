@@ -90,7 +90,7 @@ targets::tar_dir({
       # Monitor the input files using a regular tarchetypes::tar_files() step
       tar_files(
         name = input,
-        command = rows_as_files$data_df_w_filepaths$file_path
+        command = rows_as_files$data_w_file_paths$file_path
       ),
       tar_target(
         name = whatever,

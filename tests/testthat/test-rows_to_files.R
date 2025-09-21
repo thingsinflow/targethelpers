@@ -236,11 +236,11 @@ test_that("deletes files whose IDs are not in the current dataset", {
     writeLines("dummy", file3)
 
     # current dataset only has id 2
-    new_data_df_w_filepaths <- tibble::tibble(
+    new_data_w_file_paths <- tibble::tibble(
         file_path = c(file.path(temp_path, "estate_2.qs2"))
     )
 
-    deleted <- delete_existing_files_w_ids_not_present_in_current_data(new_data_df_w_filepaths,
+    deleted <- delete_existing_files_w_ids_not_present_in_current_data(new_data_w_file_paths,
                                                                        path = temp_path,
                                                                        file_prefix = "estate",
                                                                        extension = ".qs2")
@@ -256,11 +256,11 @@ test_that("returns NULL when no files need to be deleted", {
     file1 <- file.path(temp_path, "estate_10.qs2")
     writeLines("dummy", file1)
 
-    new_data_df_w_filepaths <- tibble::tibble(
+    new_data_w_file_paths <- tibble::tibble(
         file_path = c(file.path(temp_path, "estate_10.qs2"))
     )
 
-    deleted <- delete_existing_files_w_ids_not_present_in_current_data(new_data_df_w_filepaths,
+    deleted <- delete_existing_files_w_ids_not_present_in_current_data(new_data_w_file_paths,
                                                                        path = temp_path,
                                                                        file_prefix = "estate",
                                                                        extension = ".qs2")
@@ -270,11 +270,11 @@ test_that("returns NULL when no files need to be deleted", {
 
 test_that("handles empty directory gracefully", {
     temp_path <- withr::local_tempdir()
-    new_data_df_w_filepaths <- tibble::tibble(
+    new_data_w_file_paths <- tibble::tibble(
         file_path = character(0)
     )
 
-    deleted <- delete_existing_files_w_ids_not_present_in_current_data(new_data_df_w_filepaths,
+    deleted <- delete_existing_files_w_ids_not_present_in_current_data(new_data_w_file_paths,
                                                                        path = temp_path,
                                                                        file_prefix = "estate",
                                                                        extension = ".qs2")
@@ -343,8 +343,8 @@ test_that("writes all rows as new files", {
     expect_equal(length(res$new_or_updated_files), 2L)
     expect_true(all(file.exists(res$new_or_updated_files)))
     expect_identical(res$deleted_files, NULL)
-    expect_true("file_path" %in% colnames(res$data_df_w_filepaths))
-    expect_equal(sort(res$data_df_w_filepaths$file_path), sort(res$new_or_updated_files))
+    expect_true("file_path" %in% colnames(res$data_w_file_paths))
+    expect_equal(sort(res$data_w_file_paths$file_path), sort(res$new_or_updated_files))
     # Verify `changes`
     expect_null(res$changes)
 })
@@ -358,14 +358,14 @@ test_that("updates and deletes files when data changes", {
     res1 <- rows_as_files(df1, path = tmp)
     expect_true(all(file.exists(res1$new_or_updated_files)))
     # keep track of file for id 2
-    file_id2 <- res1$data_df_w_filepaths$file_path[res1$data_df_w_filepaths$id == 2]
+    file_id2 <- res1$data_w_file_paths$file_path[res1$data_w_file_paths$id == 2]
     df2 <- data.frame(id = c(1, 3), value = c("a", "c"))
     res2 <- rows_as_files(df2, path = tmp)
     # id 2 file should be deleted
     expect_true(file_id2 %in% res2$deleted_files)
     expect_false(file.exists(file_id2))
     # new file for id 3 should exist
-    file_id3 <- res2$data_df_w_filepaths$file_path[res2$data_df_w_filepaths$id == 3]
+    file_id3 <- res2$data_w_file_paths$file_path[res2$data_w_file_paths$id == 3]
     expect_true(file.exists(file_id3))
     # only two files remain in directory
     expect_equal(length(list.files(tmp)), 2L)
@@ -381,10 +381,10 @@ test_that("creates files correctly with default parameters", {
     tmp_path <- withr::local_tempdir()
     res <- rows_as_files(df, path = tmp_path)
     expect_true(dir.exists(tmp_path))
-    expect_equal(nrow(res$data_df_w_filepaths), nrow(df))
+    expect_equal(nrow(res$data_w_file_paths), nrow(df))
     expect_true(all(file.exists(res$new_or_updated_files)))
     expect_false(length(res$deleted_files) > 0)
-    expect_identical(names(res$data_df_w_filepaths)[ncol(res$data_df_w_filepaths)], "file_path")
+    expect_identical(names(res$data_w_file_paths)[ncol(res$data_w_file_paths)], "file_path")
     expect_equal(sort(basename(res$new_or_updated_files)),
                  paste0("item_", df$id, ".qs2"))
 })
