@@ -108,7 +108,11 @@ compare_rows <- function(df1, df2, id = "id") {
 #' @param extension File extension to match - must be either `".qs2"` or
 #'   `".parquet"` (default `".qs2"`).
 #'
-#' @return A character vector of IDs that are new or have changed.
+#' @return A list with two components:
+#' \describe{
+#'   \item{ids_new_or_changed_rows}{A character vector of IDs that are new or have changed.}
+#'   \item{changes}{A data frame}
+#'   }
 #'
 #' @details This is one of three helper functions that work together to keep a
 #'   set of per‑property files in sync with the live Boliga dataset:
@@ -148,6 +152,9 @@ compare_with_existing_files <- function(new_data_df_w_filepaths,
                                         file_prefix,
                                         extension = ".qs2") {
 
+    # Make sure we're working on a tibble
+    new_data_df_w_filepaths <- new_data_df_w_filepaths |> as_tibble()
+
     # Set read function to use
     read_func <- switch (extension,
                          ".qs2"     = qs_read,
@@ -172,8 +179,8 @@ compare_with_existing_files <- function(new_data_df_w_filepaths,
                                                       unique()) |>
             pull(.data[[id_col_name]])
 
-        # If logging in debug mode: output info for each row on which col(s) has/have changed
-        if (log_threshold() == as.loglevel("DEBUG") & length(ids_new_or_changed_rows) > 0) {
+        # Make summary of changes
+        if (length(ids_new_or_changed_rows) > 0) {
             changes <- compare_rows(old_data |> select(-any_of(cols_not_to_compare)) |>
                                         filter(.data[[id_col_name]] %in% ids_new_or_changed_rows),
                                     new_data_df_w_filepaths |>
@@ -182,17 +189,37 @@ compare_with_existing_files <- function(new_data_df_w_filepaths,
                                         filter(.data[[id_col_name]] %in% ids_new_or_changed_rows)
             ) |>
                 select(all_of(id_col_name), "changed_cols")
-            log_debug("Changed columns:")
-            for (n in seq_len(nrow(changes))) {
-                log_debug("{id_col_name}={changes[n, 1]}: {changes[n, 2]}")
+
+            # If logging in debug mode: output info for each row on which col(s) has/have changed
+            if (log_threshold() == as.loglevel("DEBUG")) {
+                log_debug("Changed columns:")
+                for (n in seq_len(nrow(changes))) {
+                    log_debug("{id_col_name}={changes[n, 1]}: {changes[n, 2]}")
+                }
             }
+
+            lookup_col_value <- function(data_df, id_col_name, id_to_match, colname) {
+                colname <- unlist(strsplit(colname, ","))
+                out <- data_df |>
+                    filter(.data[[id_col_name]] == id_to_match)
+                out[, colname]
+            }
+
+            changes <- changes %>%
+                mutate(old = purrr::map2_chr(.data[["id"]], .data[["changed_cols"]], ~lookup_col_value(old_data,                id_col_name, .x, .y) |> toJSON()),
+                       new = purrr::map2_chr(.data[["id"]], .data[["changed_cols"]], ~lookup_col_value(new_data_df_w_filepaths, id_col_name, .x, .y) |> toJSON()))
+
+            if (nrow(changes) == 0) changes <- NULL
         }
     }
 
     if (!exists("ids_new_or_changed_rows")) ids_new_or_changed_rows <- new_data_df_w_filepaths[[id_col_name]]
+    if (!exists("changes"))                                 changes <- NULL
 
-    # Return ids of all the new or changed rows (compared to existing file data)
-    return(ids_new_or_changed_rows)
+    # Return a list of ids of all the new or changed rows and summary (compared to existing file data)
+    res <- list(ids_new_or_changed_rows = ids_new_or_changed_rows,
+                changes                 = changes)
+    return(res)
 }
 
 #' Save Each Row as a Separate File
@@ -403,10 +430,11 @@ add_filepaths_to_df <- function(data_df,
 #' @param extension File extension (including leading dot) used when saving
 #'   files. Defaults to ".qs2".
 #'
-#' @return A list with four components:
+#' @return A list with five components that summarises the actions taken:
 #' \describe{
 #'   \item{data_df_w_filepaths}{Data frame augmented with the full path of each row’s file.}
 #'   \item{ids_new_or_changed_rows}{Vector of ids for rows that are new or have changed.}
+#'   \item{changes}{Data frame with summary of what has changed. Each row lists `id`, `changed_cols`, `old`, `new`, with `old` and `new` encoded as JSON.}
 #'   \item{new_or_updated_files}{Character vector of paths to files that were created or updated.}
 #'   \item{deleted_files}{Character vector of paths to files that were removed because the row is no longer present.}
 #' }
@@ -473,12 +501,14 @@ rows_to_files <- function(data_df,                   # The data rows to convert 
                                                extension           = extension)
 
     # Identify new or changed rows of data
-    ids_new_or_changed_rows <- compare_with_existing_files(data_df_w_filepaths,
-                                                           cols_not_to_compare = cols_not_to_compare,
-                                                           id_col_name         = id_col_name,
-                                                           path                = path,
-                                                           file_prefix         = file_prefix,
-                                                           extension           = extension)
+    res <- compare_with_existing_files(data_df_w_filepaths,
+                                       cols_not_to_compare = cols_not_to_compare,
+                                       id_col_name         = id_col_name,
+                                       path                = path,
+                                       file_prefix         = file_prefix,
+                                       extension           = extension)
+    ids_new_or_changed_rows <- res$ids_new_or_changed_rows
+    changes                 <- res$changes
     log_info("ids_new_or_changed_rows: {length(ids_new_or_changed_rows)}")
     if (!is_empty(ids_new_or_changed_rows))
         log_debug(ids_new_or_changed_rows |> paste(collapse = ","))
@@ -508,6 +538,7 @@ rows_to_files <- function(data_df,                   # The data rows to convert 
     # Return summary of results for all the actions above
     summary <- list(data_df_w_filepaths     = data_df_w_filepaths,
                     ids_new_or_changed_rows = ids_new_or_changed_rows,
+                    changes                 = changes,
                     new_or_updated_files    = new_or_updated_files,
                     deleted_files           = deleted_files)
 

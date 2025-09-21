@@ -31,7 +31,11 @@ comparison (default is \code{"images"}).}
 \code{".parquet"} (default \code{".qs2"}).}
 }
 \value{
-A character vector of IDs that are new or have changed.
+A list with two components:
+\describe{
+\item{ids_new_or_changed_rows}{A character vector of IDs that are new or have changed.}
+\item{changes}{A data frame}
+}
 }
 \description{
 Identifies rows in the input data frame that are new or have changed compared

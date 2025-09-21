@@ -34,10 +34,11 @@ exist. Defaults to "data_in".}
 files. Defaults to ".qs2".}
 }
 \value{
-A list with four components:
+A list with five components that summarises the actions taken:
 \describe{
 \item{data_df_w_filepaths}{Data frame augmented with the full path of each row’s file.}
 \item{ids_new_or_changed_rows}{Vector of ids for rows that are new or have changed.}
+\item{changes}{Data frame with summary of what has changed. Each row lists \code{id}, \code{changed_cols}, \code{old}, \code{new}, with \code{old} and \code{new} encoded as JSON.}
 \item{new_or_updated_files}{Character vector of paths to files that were created or updated.}
 \item{deleted_files}{Character vector of paths to files that were removed because the row is no longer present.}
 }

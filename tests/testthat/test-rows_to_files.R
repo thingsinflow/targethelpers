@@ -83,7 +83,12 @@ test_that("returns all IDs when no existing files present", {
         file_path = c("path1", "path2", "path3")
     )
     result <- compare_with_existing_files(test_data, path = "nonexistent_dir", file_prefix = "test")
-    expect_equal(result, c(1, 2, 3))
+    # Verify `ids_new_or_changed_rows`
+    res <- result$ids_new_or_changed_rows
+    expect_equal(res, c(1, 2, 3))
+    # Verify `changes`
+    res <- result$changes
+    expect_null(res)
 })
 
 test_that("detects new and changed rows", {
@@ -91,8 +96,34 @@ test_that("detects new and changed rows", {
     qs2::qs_save(tibble::tibble(id = 1L, val = "a"), file.path(temp_path,"estate_1.qs2"))
     qs2::qs_save(tibble::tibble(id = 2L, val = "b"), file.path(temp_path,"estate_2.qs2"))
     new_df <- tibble::tibble(id = c(1L,2L), val = c("a","c") , file_path = c("estate_1.qs2", "estate_2.qs2"))
-    res <- compare_with_existing_files(new_df, path = temp_path, file_prefix = "estate")
+    result <- compare_with_existing_files(new_df, path = temp_path, file_prefix = "estate")
+    # Verify `ids_new_or_changed_rows`
+    res <- result$ids_new_or_changed_rows
     expect_equal(res, 2L)
+    # Verify `changes`
+    res <- result$changes
+    old <- res$old |> fromJSON()
+    new <- res$new |> fromJSON()
+    expect_equal(old, data.frame(val = "b"))
+    expect_equal(new, data.frame(val = "c"))
+})
+
+test_that("returns summary of all changes when multiple columns have changed", {
+    temp_path <- withr::local_tempdir()
+    qs2::qs_save(tibble::tibble(id = 1L, val = "a", val2 = 1, val3 = "x"), file.path(temp_path,"estate_1.qs2"))
+    qs2::qs_save(tibble::tibble(id = 2L, val = "b", val2 = 1, val3 = "x"), file.path(temp_path,"estate_2.qs2"))
+    new_df <- tibble::tibble(id = c(1L,2L), val = c("a","c"), val2 = c(1, 2), val3 = c("x", "x"), file_path = c("estate_1.qs2", "estate_2.qs2"))
+    result <- compare_with_existing_files(new_df, path = temp_path, file_prefix = "estate")
+    # Verify `ids_new_or_changed_rows`
+    res <- result$ids_new_or_changed_rows
+    expect_equal(res, 2L)
+    # Verify `changes`
+    res <- result$changes
+    old <- res$old |> fromJSON()
+    new <- res$new |> fromJSON()
+    expect_equal(res$changed_cols, "val,val2")
+    expect_equal(old, data.frame(val = "b", val2 = 1))
+    expect_equal(new, data.frame(val = "c", val2 = 2))
 })
 
 test_that("ignores specified columns in comparison", {
@@ -100,8 +131,16 @@ test_that("ignores specified columns in comparison", {
     qs2::qs_save(tibble::tibble(id = 1L, val = "a", xyz = "old"), file.path(temp_path,"estate_1.qs2"))
     qs2::qs_save(tibble::tibble(id = 2L, val = "b", xyz = "old"), file.path(temp_path,"estate_2.qs2"))
     new_df <- tibble::tibble(id = c(1L,2L), val = c("a","c"), xyz = c("new", "new") , file_path = c("estate_1.qs2", "estate_2.qs2"))
-    res <- compare_with_existing_files(new_df, cols_not_to_compare = c("xyz"), path = temp_path, file_prefix = "estate")
+    result <- compare_with_existing_files(new_df, cols_not_to_compare = c("xyz"), path = temp_path, file_prefix = "estate")
+    # Verify `ids_new_or_changed_rows`
+    res <- result$ids_new_or_changed_rows
     expect_equal(res, 2L)
+    # Verify `changes`
+    res <- result$changes
+    old <- res$old |> fromJSON()
+    new <- res$new |> fromJSON()
+    expect_equal(old, data.frame(val = "b"))
+    expect_equal(new, data.frame(val = "c"))
 })
 
 test_that("no debug logging when no changes or not in debug mode", {
@@ -122,9 +161,14 @@ test_that("no debug logging when no changes or not in debug mode", {
         log_debug = function(...) log_calls <<- c(log_calls, list(list(...)))
     )
 
-    ids <- compare_with_existing_files(new_df, path = temp_dir, file_prefix = "estate", extension = ".qs2")
+    result <- compare_with_existing_files(new_df, path = temp_dir, file_prefix = "estate", extension = ".qs2")
+    # Verify `ids_new_or_changed_rows`
+    ids <- result$ids_new_or_changed_rows
     expect_equal(ids, 2)
     expect_length(log_calls, 0)
+    # Verify `changes`
+    res <- result$changes
+    expect_null(res)
 })
 
 test_that("debug logging when changes and in debug mode", {
@@ -139,9 +183,17 @@ test_that("debug logging when changes and in debug mode", {
         log_debug = function(...) log_calls <<- c(log_calls, ...) |> paste(collapse = "\n")
     )
 
-    ids <- compare_with_existing_files(new_df, path = temp_path, file_prefix = "estate")
+    result <- compare_with_existing_files(new_df, path = temp_path, file_prefix = "estate")
+    # Verify `ids_new_or_changed_rows`
+    ids <- result$ids_new_or_changed_rows
     expect_equal(ids, 2)
     expect_match(log_calls, "\\{id_col_name\\}")
+    # Verify `changes`
+    res <- result$changes
+    old <- res$old |> fromJSON()
+    new <- res$new |> fromJSON()
+    expect_equal(old, data.frame(val = "b"))
+    expect_equal(new, data.frame(val = "c"))
 })
 
 
@@ -293,6 +345,8 @@ test_that("writes all rows as new files", {
     expect_identical(res$deleted_files, NULL)
     expect_true("file_path" %in% colnames(res$data_df_w_filepaths))
     expect_equal(sort(res$data_df_w_filepaths$file_path), sort(res$new_or_updated_files))
+    # Verify `changes`
+    expect_null(res$changes)
 })
 
 test_that("updates and deletes files when data changes", {
@@ -315,6 +369,8 @@ test_that("updates and deletes files when data changes", {
     expect_true(file.exists(file_id3))
     # only two files remain in directory
     expect_equal(length(list.files(tmp)), 2L)
+    # Verify `changes`
+    expect_null(res2$changes)
 })
 
 test_that("creates files correctly with default parameters", {
@@ -347,6 +403,12 @@ test_that("updates changed rows and ignores cols_not_to_compare", {
     expect_equal(length(res2$ids_new_or_changed_rows), 1L)
     expect_true(file.exists(res2$new_or_updated_files))
     expect_false(length(res2$deleted_files) > 0)
+    # Verify `changes`
+    res <- res2$changes
+    old <- res$old |> fromJSON()
+    new <- res$new |> fromJSON()
+    expect_equal(old, data.frame(value = "b"))
+    expect_equal(new, data.frame(value = "c"))
     # ts changed but ignored
     df$ts[2] <- Sys.time()
     res3 <- rows_to_files(df, cols_not_to_compare = "ts", id_col_name = "id",
