@@ -488,7 +488,7 @@ add_filepaths_to_df <- function(data_df,
 #'   "```{r}",
 #'   "rows_as_files_status$new_or_updated_files |> base::print(max=20)",
 #'   "```",
-#'   "### Pipeline output (=data read back from the file)s",
+#'   "### Pipeline output (=data read back from the files)",
 #'   "```{r}",
 #'   "targets::tar_read(whatever)",
 #'   "```"
@@ -533,7 +533,7 @@ add_filepaths_to_df <- function(data_df,
 #' targets::tar_read(whatever)
 #' utils::browseURL("report.html")
 #' # Make sure the report has time to be rendered before the script terminates
-#' Sys.sleep(2)
+#' Sys.sleep(1)
 #' })
 #' }
 rows_as_files <- function(data_df,                   # The data rows to convert to files
