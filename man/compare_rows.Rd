@@ -11,22 +11,21 @@ compare_rows(df1, df2, id = "id")
 
 \item{df2}{Second data frame to compare against \code{df1}}
 
-\item{id}{The column name that uniquely identifies a row.
-Must exist in both data frames.}
+\item{id}{The column name that uniquely identifies a row. Must exist in
+both data frames.}
 }
 \value{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{A copy of `df1` with an additional character column
-        called `changed_cols`.  Each element contains the names
-        (comma‑separated) of columns whose values differ between
-        the two frames.  If no changes are detected the value is
-        `NA_character_`.
+\if{html}{\out{<div class="sourceCode">}}\preformatted{A copy of `df1` with an additional character column called
 }\if{html}{\out{</div>}}
+
+\code{changed_cols}.  Each element contains the names (comma‑separated) of
+columns whose values differ between the two frames.  If no changes are
+detected the value is \code{NA_character_}.
 }
 \description{
 Compare two data frames row‑wise by id and flag the changed columns
 }
 \examples{
-\dontrun{
   df1 <- data.frame(id = 1:3,
                     a   = c(10, 20, 30),
                     b   = c("x", "y", "z"),
@@ -37,10 +36,9 @@ Compare two data frames row‑wise by id and flag the changed columns
                     b   = c("x", "y", "zz"),      # row 3 changed
                     stringsAsFactors = FALSE)
 
-  compare_rows(df1, df2)
+  targethelpers:::compare_rows(df1, df2)
   #   id a  b       changed_cols
   # 1  1 10 x                NA
   # 2  2 20 y                 a
   # 3  3 30 z              b
-}
 }

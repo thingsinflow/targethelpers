@@ -48,8 +48,16 @@ More functions will probably be added later on as the need arises.
 
 ## Installation
 
-You can install the development version of `targethelpers` from
-[GitHub](https://github.com/) with:
+The latest stable version of the `targethelpers` package can be obtained
+from [CRAN](https://CRAN.R-project.org/package=targethelpers) with the
+command
+
+``` r
+install.packages("targethelpers")
+```
+
+You can install the development version of the `targethelpers` package
+from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("pak")
@@ -104,32 +112,32 @@ targets::tar_dir({
   targets::tar_read(whatever)
 })
 #> + data dispatched
-#> ✔ data completed [680ms, 1.21 kB]
+#> ✔ data completed [796ms, 1.21 kB]
 #> + rows_as_files dispatched
-#> INFO [2025-09-17 13:25:08] Identify rows of new, updated and/or outdated property info + update tracked files.
-#> INFO [2025-09-17 13:25:08] ids_new_or_changed_rows: 100
-#> INFO [2025-09-17 13:25:08] new_or_updated_files: 100
-#> INFO [2025-09-17 13:25:08] deleted_files: 0
-#> ✔ rows_as_files completed [161ms, 1.92 kB]
+#> INFO [2025-09-21 20:38:17] Identify rows of new, updated and/or outdated property info + update tracked files.
+#> INFO [2025-09-21 20:38:17] ids_new_or_changed_rows: 100
+#> INFO [2025-09-21 20:38:17] new_or_updated_files: 100
+#> INFO [2025-09-21 20:38:17] deleted_files: 0
+#> ✔ rows_as_files completed [159ms, 1.91 kB]
 #> + input_files dispatched
-#> ✔ input_files completed [1ms, 738 B]
+#> ✔ input_files completed [0ms, 738 B]
 #> + input declared [100 branches]
-#> ✔ input completed [7ms, 16.45 kB]
+#> ✔ input completed [2ms, 16.47 kB]
 #> + whatever declared [100 branches]
-#> ✔ whatever completed [23ms, 16.45 kB]
+#> ✔ whatever completed [10ms, 16.47 kB]
 #> ✔ ended pipeline [1.5s, 203 completed, 0 skipped]
 #> # A tibble: 100 × 2
 #>    package   downloads
 #>    <chr>     <chr>    
-#>  1 tibble    1676553  
-#>  2 rlang     1659023  
-#>  3 ggplot2   1652946  
-#>  4 lifecycle 1613399  
-#>  5 cli       1597367  
-#>  6 dplyr     1524490  
-#>  7 rmarkdown 1510541  
-#>  8 glue      1437502  
-#>  9 purrr     1380803  
-#> 10 vctrs     1379787  
+#>  1 ggplot2   1751785  
+#>  2 rlang     1736679  
+#>  3 tibble    1718138  
+#>  4 lifecycle 1676552  
+#>  5 cli       1674480  
+#>  6 dplyr     1604971  
+#>  7 rmarkdown 1546505  
+#>  8 glue      1504486  
+#>  9 purrr     1484518  
+#> 10 magrittr  1479089  
 #> # ℹ 90 more rows
 ```

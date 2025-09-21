@@ -48,7 +48,13 @@ More functions will probably be added later on as the need arises.
 
 ## Installation
 
-You can install the development version of `targethelpers` from [GitHub](https://github.com/) with:
+The latest stable version of the `targethelpers` package can be obtained from [CRAN](https://CRAN.R-project.org/package=targethelpers) with the command
+
+```r
+install.packages("targethelpers")
+```
+
+You can install the development version of the `targethelpers` package from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("pak")

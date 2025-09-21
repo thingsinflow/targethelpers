@@ -12,16 +12,14 @@
 #'
 #' @param df1  First data frame (the “reference” one)
 #' @param df2  Second data frame to compare against `df1`
-#' @param id   The column name that uniquely identifies a row.
-#'             Must exist in both data frames.
-#' @return     A copy of `df1` with an additional character column
-#'             called `changed_cols`.  Each element contains the names
-#'             (comma‑separated) of columns whose values differ between
-#'             the two frames.  If no changes are detected the value is
-#'             `NA_character_`.
+#' @param id   The column name that uniquely identifies a row. Must exist in
+#'   both data frames.
+#' @return     A copy of `df1` with an additional character column called
+#'   `changed_cols`.  Each element contains the names (comma‑separated) of
+#'   columns whose values differ between the two frames.  If no changes are
+#'   detected the value is `NA_character_`.
 #'
 #' @examples
-#' \dontrun{
 #'   df1 <- data.frame(id = 1:3,
 #'                     a   = c(10, 20, 30),
 #'                     b   = c("x", "y", "z"),
@@ -32,12 +30,11 @@
 #'                     b   = c("x", "y", "zz"),      # row 3 changed
 #'                     stringsAsFactors = FALSE)
 #'
-#'   compare_rows(df1, df2)
+#'   targethelpers:::compare_rows(df1, df2)
 #'   #   id a  b       changed_cols
 #'   # 1  1 10 x                NA
 #'   # 2  2 20 y                 a
 #'   # 3  3 30 z              b
-#' }
 compare_rows <- function(df1, df2, id = "id") {
     # Basic sanity checks
     if (!is.data.frame(df1) || !is.data.frame(df2))
