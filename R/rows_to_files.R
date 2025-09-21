@@ -444,41 +444,98 @@ add_filepaths_to_df <- function(data_df,
 #' result <- rows_to_files(df, path = "data_out")
 #' unlink("data_out", recursive = TRUE)
 #'
+#' if (require("rmarkdown") & require("visNetwork")) {
 #' # Typical use case as part of a targets pipeline
-#' targets::tar_dir({
-#'   targets::tar_script({
+#' targets::tar_dir({ # tar_dir() runs code from a temporary directory.
 #'
-#'     library(targets)
-#'     library(tarchetypes)
+#' # Generate an rmarkdown document:
+#' lines <- c(
+#'   "---",
+#'   "title: Run Summary",
+#'   "output_format: html",
+#'   "---",
+#'   "## Status for the `targets` pipeline",
+#'   "```{r, as.is=TRUE, echo= FALSE}",
+#'   "targets::tar_glimpse()",
+#'   "```",
+#'   "### Stats",
+#'   "```{r, echo=FALSE}",
+#'   "timestamps <- targets::tar_meta()$time |> na.omit()",
+#'   "```",
+#'   "Started: `r min(timestamps)` \n\nRan for:
+#'   `r round(max(timestamps) - min(timestamps), digits = 2)` secs\n",
+#'   "### Data fetched",
+#'   "```{r}",
+#'   "data <- targets::tar_read(data)",
+#'   "dplyr::glimpse(data)",
+#'   "```",
+#'   "### Rows converted to files",
+#'   "Read summary data...",
+#'   "```{r}",
+#'   "rows_to_files_status <- targets::tar_read(rows_as_files)",
+#'   "```",
+#'   "...and print it out.\n",
+#'   "#### IDs for new or changed rows",
+#'   "```{r}",
+#'   "rows_to_files_status$ids_new_or_changed_rows",
+#'   "```",
+#'   "#### Changes compared to previous run (if any)",
+#'   "```{r}",
+#'   "rows_to_files_status$changes",
+#'   "```",
+#'   "#### Paths to all new or updated files (if any)",
+#'   "#### ",
+#'   "```{r}",
+#'   "rows_to_files_status$new_or_updated_files |> base::print(max=20)",
+#'   "```",
+#'   "### Pipeline output (=data read back from the file)s",
+#'   "```{r}",
+#'   "targets::tar_read(whatever)",
+#'   "```"
+#' )
+#' writeLines(lines, "report.rmd")
 #'
-#'     list(
-#'       tar_target(
+#' targets::tar_script({
+#'
+#'   library(targets)
+#'   library(tarchetypes)
+#'
+#'   list(
+#'     tar_target(
 #'         name = data,
 #'         command = jsonlite::fromJSON("https://cranlogs.r-pkg.org/top/last-month/100")$downloads
-#'       ),
-#'       tar_target(
+#'     ),
+#'     tar_target(
 #'         name = rows_as_files,
 #'         command = data |>
-#'           targethelpers::rows_to_files(id_col_name = "package", extension = ".rds"),
+#'             targethelpers::rows_to_files(id_col_name = "package", extension = ".rds"),
 #'         format = "rds"
-#'       ),
-#'       tar_files(
+#'     ),
+#'     tar_files(
 #'         name = input,
 #'         command = rows_as_files$data_df_w_filepaths$file_path
-#'       ),
-#'       tar_target(
+#'     ),
+#'     tar_target(
 #'         name = whatever,
 #'         command = input |>
 #'             readRDS()
 #'         # Your code here
 #'         ,
 #'         pattern = map(input)
-#'       )
+#'     ),
+#'     tar_render(
+#'         name = report,
+#'         path = "report.rmd"
 #'     )
-#'   })
-#'   targets::tar_make()
-#'   targets::tar_read(whatever)
+#'   )
 #' })
+#' targets::tar_make()
+#' targets::tar_read(whatever)
+#' utils::browseURL("report.html")
+#' # Make sure the report has time to be rendered before the script terminates
+#' Sys.sleep(2)
+#' })
+#' }
 rows_to_files <- function(data_df,                   # The data rows to convert to files
                           cols_not_to_compare = c(), # i.e. cols that always contain the current datetime but no other changes etc.
                           id_col_name         = "id",
