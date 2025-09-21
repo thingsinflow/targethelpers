@@ -1,6 +1,6 @@
 Package: targethelpers
 Title: Helpers For Scraping Webdata Using Targets Pipelines 
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: 
     person("Niels Ole", "Dam", email = "nd@thingsinflow.dk", role = c("aut", "cre"))
 Description: Miscellaneous helper functions for building pipelines using the 
