@@ -318,7 +318,7 @@ test_that("errors when id column missing", {
 })
 
 
-# rows_to_files ----------------------------------------------------------------
+# rows_as_files ----------------------------------------------------------------
 
 test_that("creates directory when missing", {
     testthat::local_mocked_bindings(
@@ -328,7 +328,7 @@ test_that("creates directory when missing", {
     dir_that_should_be_automatically_created <- file.path(tmp, "data_in")
     on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
     expect_false(dir.exists(dir_that_should_be_automatically_created))
-    rows_to_files(data_df = data.frame(id = 1, x = "a"),
+    rows_as_files(data_df = data.frame(id = 1, x = "a"),
                   path = dir_that_should_be_automatically_created)
     expect_true(dir.exists(dir_that_should_be_automatically_created))
 })
@@ -339,7 +339,7 @@ test_that("writes all rows as new files", {
     )
     tmp <- withr::local_tempdir()
     df <- data.frame(id = 1:2, value = c("a", "b"))
-    res <- rows_to_files(df, path = tmp)
+    res <- rows_as_files(df, path = tmp)
     expect_equal(length(res$new_or_updated_files), 2L)
     expect_true(all(file.exists(res$new_or_updated_files)))
     expect_identical(res$deleted_files, NULL)
@@ -355,12 +355,12 @@ test_that("updates and deletes files when data changes", {
     )
     tmp <- withr::local_tempdir()
     df1 <- data.frame(id = 1:2, value = c("a", "b"))
-    res1 <- rows_to_files(df1, path = tmp)
+    res1 <- rows_as_files(df1, path = tmp)
     expect_true(all(file.exists(res1$new_or_updated_files)))
     # keep track of file for id 2
     file_id2 <- res1$data_df_w_filepaths$file_path[res1$data_df_w_filepaths$id == 2]
     df2 <- data.frame(id = c(1, 3), value = c("a", "c"))
-    res2 <- rows_to_files(df2, path = tmp)
+    res2 <- rows_as_files(df2, path = tmp)
     # id 2 file should be deleted
     expect_true(file_id2 %in% res2$deleted_files)
     expect_false(file.exists(file_id2))
@@ -379,7 +379,7 @@ test_that("creates files correctly with default parameters", {
     )
     df <- data.frame(id = 1:3, value = letters[1:3])
     tmp_path <- withr::local_tempdir()
-    res <- rows_to_files(df, path = tmp_path)
+    res <- rows_as_files(df, path = tmp_path)
     expect_true(dir.exists(tmp_path))
     expect_equal(nrow(res$data_df_w_filepaths), nrow(df))
     expect_true(all(file.exists(res$new_or_updated_files)))
@@ -395,10 +395,10 @@ test_that("updates changed rows and ignores cols_not_to_compare", {
     )
     df <- data.frame(id = 1:2, value = c("a","b"), ts = Sys.time())
     tmp_path <- withr::local_tempdir()
-    res1 <- rows_to_files(df, path = tmp_path)
+    res1 <- rows_as_files(df, path = tmp_path)
     # change value in row 2 but keep ts unchanged
     df$value[2] <- "c"
-    res2 <- rows_to_files(df, cols_not_to_compare = "ts", id_col_name = "id",
+    res2 <- rows_as_files(df, cols_not_to_compare = "ts", id_col_name = "id",
                           path = tmp_path)
     expect_equal(length(res2$ids_new_or_changed_rows), 1L)
     expect_true(file.exists(res2$new_or_updated_files))
@@ -411,7 +411,7 @@ test_that("updates changed rows and ignores cols_not_to_compare", {
     expect_equal(new, data.frame(value = "c"))
     # ts changed but ignored
     df$ts[2] <- Sys.time()
-    res3 <- rows_to_files(df, cols_not_to_compare = "ts", id_col_name = "id",
+    res3 <- rows_as_files(df, cols_not_to_compare = "ts", id_col_name = "id",
                           path = tmp_path)
     expect_equal(length(res3$ids_new_or_changed_rows), 0L)  # no row changed (because `ts` is ignored)
 })
@@ -422,9 +422,9 @@ test_that("deletes files for removed rows", {
     )
     df <- data.frame(id = 1:3, value = letters[1:3])
     tmp_path <- withr::local_tempdir()
-    rows_to_files(df, path = tmp_path)
+    rows_as_files(df, path = tmp_path)
     df_new <- df[-3, ]   # remove id 3
-    res_del <- rows_to_files(df_new, path = tmp_path)
+    res_del <- rows_as_files(df_new, path = tmp_path)
     expect_equal(length(res_del$deleted_files), 1L)
     expect_true(file.exists(file.path(tmp_path,"item_3.qs2")) == FALSE)
 })
@@ -435,7 +435,7 @@ test_that("supports custom id_col_name and file_prefix", {
     )
     df <- data.frame(pkg = c("A","B"), val = 1:2)
     tmp_path <- withr::local_tempdir()
-    res <- rows_to_files(df, id_col_name = "pkg", file_prefix = "proj",
+    res <- rows_as_files(df, id_col_name = "pkg", file_prefix = "proj",
                          path = tmp_path)
     expect_equal(sort(basename(res$new_or_updated_files)),
                  paste0("proj_", df$pkg, ".qs2"))
@@ -449,7 +449,7 @@ test_that("writes files with different extensions", {
     for (ext in exts) {
         df <- data.frame(id = 1:2, value = letters[1:2])
         tmp_path <- withr::local_tempdir()
-        res <- rows_to_files(df, extension = ext, path = tmp_path)
+        res <- rows_as_files(df, extension = ext, path = tmp_path)
         expect_equal(sort(basename(res$new_or_updated_files)),
                      paste0("item_", df$id, ext))
     }

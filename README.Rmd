@@ -36,7 +36,7 @@ More functions will probably be added later on as the need arises.
 
 > Returns the input dataframe with a `filepath` row added.
 
-`rows_to_files(data_df, cols_not_to_compare, id_col_name, path, file_prefix, extension)`
+`rows_as_files(data_df, cols_not_to_compare, id_col_name, path, file_prefix, extension)`
 
 > When you scrape websites you only want to scrape and process the data, when it has changed.
 > This function takes the input dataframe (with a `filepath` row added) and saves each row as a separate file.
@@ -63,7 +63,7 @@ pak::pak("thingsinflow/targethelpers")
 
 ## Example
 
-This is a basic example which shows how to use `targethelpers::rows_to_files()` as part of an automated `targets` pipeline that saves and maintains each row of a data frame as a separate file that can then be monitored automatically further down the pipeline:
+This is a basic example which shows how to use `targethelpers::rows_as_files()` as part of an automated `targets` pipeline that saves and maintains each row of a data frame as a separate file that can then be monitored automatically further down the pipeline:
 
 ```{r example}
 library(targethelpers)
@@ -84,7 +84,7 @@ targets::tar_dir({
         name = rows_as_files,
         command = data |>
           # Convert each row to a file and delete files for rows that is no longer present
-          targethelpers::rows_to_files(id_col_name = "package", extension = ".rds"),
+          targethelpers::rows_as_files(id_col_name = "package", extension = ".rds"),
         format = "rds"
       ),
       # Monitor the input files using a regular tarchetypes::tar_files() step

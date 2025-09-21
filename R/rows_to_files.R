@@ -441,7 +441,7 @@ add_filepaths_to_df <- function(data_df,
 #' @examples
 #' # Example usage
 #' df <- data.frame(id = 1:3, value = c("a", "b", "c"))
-#' result <- rows_to_files(df, path = "data_out")
+#' result <- rows_as_files(df, path = "data_out")
 #' unlink("data_out", recursive = TRUE)
 #'
 #' if (require("rmarkdown") & require("visNetwork")) {
@@ -472,21 +472,21 @@ add_filepaths_to_df <- function(data_df,
 #'   "### Rows converted to files",
 #'   "Read summary data...",
 #'   "```{r}",
-#'   "rows_to_files_status <- targets::tar_read(rows_as_files)",
+#'   "rows_as_files_status <- targets::tar_read(rows_as_files)",
 #'   "```",
 #'   "...and print it out.\n",
 #'   "#### IDs for new or changed rows",
 #'   "```{r}",
-#'   "rows_to_files_status$ids_new_or_changed_rows",
+#'   "rows_as_files_status$ids_new_or_changed_rows",
 #'   "```",
 #'   "#### Changes compared to previous run (if any)",
 #'   "```{r}",
-#'   "rows_to_files_status$changes",
+#'   "rows_as_files_status$changes",
 #'   "```",
 #'   "#### Paths to all new or updated files (if any)",
 #'   "#### ",
 #'   "```{r}",
-#'   "rows_to_files_status$new_or_updated_files |> base::print(max=20)",
+#'   "rows_as_files_status$new_or_updated_files |> base::print(max=20)",
 #'   "```",
 #'   "### Pipeline output (=data read back from the file)s",
 #'   "```{r}",
@@ -508,7 +508,7 @@ add_filepaths_to_df <- function(data_df,
 #'     tar_target(
 #'         name = rows_as_files,
 #'         command = data |>
-#'             targethelpers::rows_to_files(id_col_name = "package", extension = ".rds"),
+#'             targethelpers::rows_as_files(id_col_name = "package", extension = ".rds"),
 #'         format = "rds"
 #'     ),
 #'     tar_files(
@@ -536,7 +536,7 @@ add_filepaths_to_df <- function(data_df,
 #' Sys.sleep(2)
 #' })
 #' }
-rows_to_files <- function(data_df,                   # The data rows to convert to files
+rows_as_files <- function(data_df,                   # The data rows to convert to files
                           cols_not_to_compare = c(), # i.e. cols that always contain the current datetime but no other changes etc.
                           id_col_name         = "id",
                           path                = "data_in",
