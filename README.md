@@ -75,69 +75,110 @@ file that can then be monitored automatically further down the pipeline:
 library(targethelpers)
 
 # Typical use case as part of a targets pipeline
-targets::tar_dir({
-  targets::tar_script({
-
-    library(targets)
-    library(tarchetypes)
-
-    list(
-      tar_target(
-        name = data,
-        command = jsonlite::fromJSON("https://cranlogs.r-pkg.org/top/last-month/100")$downloads
-      ),
-      tar_target(
-        name = rows_as_files,
-        command = data |>
-          # Convert each row to a file and delete files for rows that is no longer present
-          targethelpers::rows_as_files(id_col_name = "package", extension = ".rds"),
-        format = "rds"
-      ),
-      # Monitor the input files using a regular tarchetypes::tar_files() step
-      tar_files(
-        name = input,
-        command = rows_as_files$data_w_file_paths$file_path
-      ),
-      tar_target(
-        name = whatever,
-        command = input |>
-            readRDS()
-        # Your code here
-        ,
-        pattern = map(input)
-      )
+targets::tar_dir({ # tar_dir() runs code from a temporary directory.
+    
+    # Generate a rmarkdown document:
+    lines <- c(
+        "---",
+        "title: Run Summary",
+        "output_format: html",
+        "---",
+        "## Status for the `targets` pipeline",
+        "```{r, as.is=TRUE, echo= FALSE}",
+        "targets::tar_glimpse()",
+        "```",
+        "### Stats",
+        "```{r, echo=FALSE}",
+        "timestamps <- targets::tar_meta()$time |> na.omit()",
+        "```",
+        "Started: `r min(timestamps)` \n\nRan for: `r round(max(timestamps) - min(timestamps), digits = 2)` secs\n",
+        "### Data fetched",
+        "```{r}",
+        "data <- targets::tar_read(data)",
+        "dplyr::glimpse(data)",
+        "```",
+        "### Rows converted to files",
+        "Read summary data...",
+        "```{r}",
+        "rows_as_files_status <- targets::tar_read(rows_as_files)",
+        "```",
+        "...and print it out.\n",
+        "#### IDs for new or changed rows",
+        "```{r}",
+        "rows_as_files_status$ids_new_or_changed_rows",
+        "```",
+        "#### Changes compared to previous run (if any)",
+        "```{r}",
+        "rows_as_files_status$changes",
+        "```",
+        "#### Paths to all new or updated files (if any)",
+        "#### ",
+        "```{r}",
+        "rows_as_files_status$new_or_updated_files |> base::print(max=20)",
+        "```",
+        "### Pipeline output (=data read back from the files)",
+        "```{r}",
+        "targets::tar_read(whatever)",
+        "```"
     )
-  })
-  targets::tar_make()
-  targets::tar_read(whatever)
+    writeLines(lines, "report.rmd")
+    
+    targets::tar_script({
+        
+        library(targets)
+        library(tarchetypes)
+        
+        list(
+            tar_target(
+                name = data,
+                command = jsonlite::fromJSON("https://cranlogs.r-pkg.org/top/last-month/100")$downloads
+            ),
+            tar_target(
+                name = rows_as_files,
+                command = data |>
+                    targethelpers::rows_as_files(id_col_name = "package", extension = ".rds"),
+                format = "rds"
+            ),
+            tar_files(
+                name = input,
+                command = rows_as_files$data_df_w_filepaths$file_path
+            ),
+            tar_target(
+                name = whatever,
+                command = input |>
+                    readRDS()
+                # Your code here
+                ,
+                pattern = map(input)
+            ),
+            tar_render(
+                name = report,
+                path = "report.rmd"
+            )
+        )
+    })
+    targets::tar_make()
+    targets::tar_read(whatever)
+    utils::browseURL("report.html")
+    # Make sure the report has time to be rendered before the script terminates
+    Sys.sleep(1)
 })
-#> + data dispatched
-#> ✔ data completed [796ms, 1.21 kB]
-#> + rows_as_files dispatched
-#> INFO [2025-09-21 20:38:17] Identify rows of new, updated and/or outdated property info + update tracked files.
-#> INFO [2025-09-21 20:38:17] ids_new_or_changed_rows: 100
-#> INFO [2025-09-21 20:38:17] new_or_updated_files: 100
-#> INFO [2025-09-21 20:38:17] deleted_files: 0
-#> ✔ rows_as_files completed [159ms, 1.91 kB]
-#> + input_files dispatched
-#> ✔ input_files completed [0ms, 738 B]
-#> + input declared [100 branches]
-#> ✔ input completed [2ms, 16.47 kB]
-#> + whatever declared [100 branches]
-#> ✔ whatever completed [10ms, 16.47 kB]
-#> ✔ ended pipeline [1.5s, 203 completed, 0 skipped]
-#> # A tibble: 100 × 2
-#>    package   downloads
-#>    <chr>     <chr>    
-#>  1 ggplot2   1751785  
-#>  2 rlang     1736679  
-#>  3 tibble    1718138  
-#>  4 lifecycle 1676552  
-#>  5 cli       1674480  
-#>  6 dplyr     1604971  
-#>  7 rmarkdown 1546505  
-#>  8 glue      1504486  
-#>  9 purrr     1484518  
-#> 10 magrittr  1479089  
-#> # ℹ 90 more rows
 ```
+
+    #> + data dispatched
+    #> ✔ data completed [422ms, 1.21 kB]
+    #> + rows_as_files dispatched
+    #> INFO [2025-09-22 00:46:42] Identify rows of new, updated and/or outdated property info + update tracked files.
+    #> INFO [2025-09-22 00:46:42] ids_new_or_changed_rows: 100
+    #> INFO [2025-09-22 00:46:42] new_or_updated_files: 100
+    #> INFO [2025-09-22 00:46:42] deleted_files: 0
+    #> ✔ rows_as_files completed [161ms, 1.91 kB]
+    #> + input_files dispatched
+    #> ✔ input_files completed [0ms, 738 B]
+    #> + input declared [100 branches]
+    #> ✔ input completed [3ms, 16.47 kB]
+    #> + whatever declared [100 branches]
+    #> ✔ whatever completed [12ms, 16.47 kB]
+    #> + report dispatched
+    #> ✔ report completed [1.7s, 1.51 MB]
+    #> ✔ ended pipeline [2.9s, 204 completed, 0 skipped]

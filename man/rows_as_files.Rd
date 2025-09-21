@@ -63,7 +63,7 @@ if (require("rmarkdown") & require("visNetwork")) {
 # Typical use case as part of a targets pipeline
 targets::tar_dir({ # tar_dir() runs code from a temporary directory.
 
-# Generate an rmarkdown document:
+# Generate a rmarkdown document:
 lines <- c(
   "---",
   "title: Run Summary",
