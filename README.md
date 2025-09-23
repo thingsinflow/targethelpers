@@ -74,7 +74,7 @@ file that can then be monitored automatically further down the pipeline:
 ``` r
 library(targethelpers)
 
-# Typical use case as part of a targets pipeline
+# Typical use case when used as part of a targets pipeline
 targets::tar_dir({ # tar_dir() runs code from a temporary directory.
     
     # Generate a rmarkdown document:
@@ -166,19 +166,19 @@ targets::tar_dir({ # tar_dir() runs code from a temporary directory.
 ```
 
     #> + data dispatched
-    #> ✔ data completed [636ms, 1.22 kB]
+    #> ✔ data completed [637ms, 1.22 kB]
     #> + rows_as_files dispatched
-    #> INFO [2025-09-23 21:30:13] Identify rows of new, updated and/or outdated property info + update tracked files.
-    #> INFO [2025-09-23 21:30:13] ids_new_or_changed_rows: 100
-    #> INFO [2025-09-23 21:30:13] new_or_updated_files: 100
-    #> INFO [2025-09-23 21:30:13] deleted_files: 0
-    #> ✔ rows_as_files completed [244ms, 1.93 kB]
+    #> INFO [2025-09-23 21:39:37] Identify rows of new, updated and/or outdated property info + update tracked files.
+    #> INFO [2025-09-23 21:39:37] ids_new_or_changed_rows: 100
+    #> INFO [2025-09-23 21:39:37] new_or_updated_files: 100
+    #> INFO [2025-09-23 21:39:37] deleted_files: 0
+    #> ✔ rows_as_files completed [167ms, 1.93 kB]
     #> + input_files dispatched
     #> ✔ input_files completed [0ms, 744 B]
     #> + input declared [100 branches]
-    #> ✔ input completed [4ms, 16.46 kB]
+    #> ✔ input completed [6ms, 16.46 kB]
     #> + whatever declared [100 branches]
-    #> ✔ whatever completed [19ms, 16.46 kB]
+    #> ✔ whatever completed [17ms, 16.46 kB]
     #> + report dispatched
     #> ✔ report completed [1.8s, 1.51 MB]
     #> ✔ ended pipeline [3.2s, 204 completed, 0 skipped]

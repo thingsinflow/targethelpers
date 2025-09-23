@@ -68,7 +68,7 @@ This is a basic example which shows how to use `targethelpers::rows_as_files()` 
 ```{r example}
 library(targethelpers)
 
-# Typical use case as part of a targets pipeline
+# Typical use case when used as part of a targets pipeline
 targets::tar_dir({ # tar_dir() runs code from a temporary directory.
     
     # Generate a rmarkdown document:
