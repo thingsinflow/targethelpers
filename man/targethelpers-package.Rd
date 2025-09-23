@@ -4,7 +4,7 @@
 \name{targethelpers-package}
 \alias{targethelpers}
 \alias{targethelpers-package}
-\title{targethelpers: Helpers For Scraping Webdata Using Targets Pipelines}
+\title{targethelpers: Helpers for Scraping Webdata Using Targets Pipelines}
 \description{
 Miscellaneous helper functions for building pipelines using the 'Targets'/'Tarchetypes' packages. Currently only a few functions are implemented for converting data frame rows to individual files, while syncing changes by updating only modified rows and cleaning up obsolete files. Useful when scraping webdata where a local persisted copy of the previous version of the data is needed in order to determine if the data has changed since the previous run.
 }
