@@ -25,7 +25,7 @@ websites.
 Currently the `targethelpers` package only implement the two functions
 listed below.
 
-More functions will probably be added later on as the need arises.
+More functions will be added later on as the need arises.
 
 ### File Management Helpers
 
@@ -166,19 +166,19 @@ targets::tar_dir({ # tar_dir() runs code from a temporary directory.
 ```
 
     #> + data dispatched
-    #> ✔ data completed [637ms, 1.22 kB]
+    #> ✔ data completed [656ms, 1.22 kB]
     #> + rows_as_files dispatched
-    #> INFO [2025-09-23 21:39:37] Identify rows of new, updated and/or outdated property info + update tracked files.
-    #> INFO [2025-09-23 21:39:37] ids_new_or_changed_rows: 100
-    #> INFO [2025-09-23 21:39:37] new_or_updated_files: 100
-    #> INFO [2025-09-23 21:39:37] deleted_files: 0
-    #> ✔ rows_as_files completed [167ms, 1.93 kB]
+    #> INFO [2025-09-23 23:25:29] Identify rows of new, updated and/or outdated property info + update tracked files.
+    #> INFO [2025-09-23 23:25:29] ids_new_or_changed_rows: 100
+    #> INFO [2025-09-23 23:25:29] new_or_updated_files: 100
+    #> INFO [2025-09-23 23:25:29] deleted_files: 0
+    #> ✔ rows_as_files completed [177ms, 1.93 kB]
     #> + input_files dispatched
     #> ✔ input_files completed [0ms, 744 B]
     #> + input declared [100 branches]
-    #> ✔ input completed [6ms, 16.46 kB]
+    #> ✔ input completed [12ms, 16.46 kB]
     #> + whatever declared [100 branches]
-    #> ✔ whatever completed [17ms, 16.46 kB]
+    #> ✔ whatever completed [12ms, 16.46 kB]
     #> + report dispatched
-    #> ✔ report completed [1.8s, 1.51 MB]
-    #> ✔ ended pipeline [3.2s, 204 completed, 0 skipped]
+    #> ✔ report completed [1.9s, 1.51 MB]
+    #> ✔ ended pipeline [3.4s, 204 completed, 0 skipped]

@@ -28,7 +28,7 @@ A simple package that provides some extra functions which I have found to be use
 
 Currently the `targethelpers` package only implement the two functions listed below.
 
-More functions will probably be added later on as the need arises.
+More functions will be added later on as the need arises.
 
 ### File Management Helpers
 
