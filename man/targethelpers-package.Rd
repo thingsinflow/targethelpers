@@ -8,6 +8,14 @@
 \description{
 Miscellaneous helper functions for building pipelines using the 'Targets'/'Tarchetypes' packages. Currently only a few functions are implemented for converting data frame rows to individual files, while syncing changes by updating only modified rows and cleaning up obsolete files. Useful when scraping webdata where a local persisted copy of the previous version of the data is needed in order to determine if the data has changed since the previous run.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/thingsinflow/targethelpers}
+  \item Report bugs at \url{https://github.com/thingsinflow/targethelpers/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Niels Ole Dam \email{nd@thingsinflow.dk} [copyright holder]
 
