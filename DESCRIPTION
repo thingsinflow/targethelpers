@@ -33,3 +33,5 @@ Imports:
     targets,
     tibble,
     withr
+URL: https://github.com/thingsinflow/targethelpers
+BugReports: https://github.com/thingsinflow/targethelpers/issues
