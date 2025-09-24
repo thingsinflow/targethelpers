@@ -146,9 +146,12 @@ targets::tar_script({
 })
 targets::tar_make()
 targets::tar_read(whatever)
-utils::browseURL("report.html")
-# Make sure the report has time to be rendered before the script terminates
-Sys.sleep(1)
+# Open the rendered report only in interactive sessions
+if (interactive()) {
+  utils::browseURL("report.html")
+  # ...and make sure the report has time to be rendered before the script terminates
+  Sys.sleep(1)
+}
 })
 }
 }

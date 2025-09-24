@@ -531,9 +531,12 @@ add_filepaths_to_df <- function(data_df,
 #' })
 #' targets::tar_make()
 #' targets::tar_read(whatever)
-#' utils::browseURL("report.html")
-#' # Make sure the report has time to be rendered before the script terminates
-#' Sys.sleep(1)
+#' # Open the rendered report only in interactive sessions
+#' if (interactive()) {
+#'   utils::browseURL("report.html")
+#'   # ...and make sure the report has time to be rendered before the script terminates
+#'   Sys.sleep(1)
+#' }
 #' })
 #' }
 rows_as_files <- function(data_df,                   # The data rows to convert to files
