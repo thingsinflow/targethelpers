@@ -176,22 +176,22 @@ compare_with_existing_files <- function(new_data_w_file_paths,
                                                       unique()) |>
             pull(.data[[id_col_name]])
 
-        # Make summary of changes
+        # Make summary of row changes
         if (length(ids_new_or_changed_rows) > 0) {
-            changes <- compare_rows(old_data |> select(-any_of(cols_not_to_compare)) |>
-                                        filter(.data[[id_col_name]] %in% ids_new_or_changed_rows),
-                                    new_data_w_file_paths |>
-                                        select(-"file_path",
-                                               -any_of(cols_not_to_compare)) |>
-                                        filter(.data[[id_col_name]] %in% ids_new_or_changed_rows)
+            row_changes <- compare_rows(old_data |> select(-any_of(cols_not_to_compare)) |>
+                                            filter(.data[[id_col_name]] %in% ids_new_or_changed_rows),
+                                        new_data_w_file_paths |>
+                                            select(-"file_path",
+                                                   -any_of(cols_not_to_compare)) |>
+                                            filter(.data[[id_col_name]] %in% ids_new_or_changed_rows)
             ) |>
                 select(all_of(id_col_name), "changed_cols")
 
             # If logging in debug mode: output info for each row on which col(s) has/have changed
             if (log_threshold() == as.loglevel("DEBUG")) {
                 log_debug("Changed columns:")
-                for (n in seq_len(nrow(changes))) {
-                    log_debug("{id_col_name}={changes[n, 1]}: {changes[n, 2]}")
+                for (n in seq_len(nrow(row_changes))) {
+                    log_debug("{id_col_name}={row_changes[n, 1]}: {row_changes[n, 2]}")
                 }
             }
 
@@ -202,20 +202,20 @@ compare_with_existing_files <- function(new_data_w_file_paths,
                 out[, colname]
             }
 
-            changes <- changes %>%
-                mutate(old = purrr::map2_chr(.data[["id"]], .data[["changed_cols"]], ~lookup_col_value(old_data,                id_col_name, .x, .y) |> toJSON()),
+            row_changes <- row_changes %>%
+                mutate(old = purrr::map2_chr(.data[["id"]], .data[["changed_cols"]], ~lookup_col_value(old_data,              id_col_name, .x, .y) |> toJSON()),
                        new = purrr::map2_chr(.data[["id"]], .data[["changed_cols"]], ~lookup_col_value(new_data_w_file_paths, id_col_name, .x, .y) |> toJSON()))
 
-            if (nrow(changes) == 0) changes <- NULL
+            if (nrow(row_changes) == 0) row_changes <- NULL
         }
     }
 
     if (!exists("ids_new_or_changed_rows")) ids_new_or_changed_rows <- new_data_w_file_paths[[id_col_name]]
-    if (!exists("changes"))                                 changes <- NULL
+    if (!exists("row_changes"))                         row_changes <- NULL
 
     # Return a list of ids of all the new or changed rows and summary (compared to existing file data)
     res <- list(ids_new_or_changed_rows = ids_new_or_changed_rows,
-                changes                 = changes)
+                changes                 = row_changes)
     return(res)
 }
 
