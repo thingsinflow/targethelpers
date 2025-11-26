@@ -183,7 +183,8 @@ compare_with_existing_files <- function(new_data_w_file_paths,
                                         new_data_w_file_paths |>
                                             select(-"file_path",
                                                    -any_of(cols_not_to_compare)) |>
-                                            filter(.data[[id_col_name]] %in% ids_new_or_changed_rows)
+                                            filter(.data[[id_col_name]] %in% ids_new_or_changed_rows),
+                                        id = id_col_name
             ) |>
                 select(all_of(id_col_name), "changed_cols")
 
@@ -203,8 +204,8 @@ compare_with_existing_files <- function(new_data_w_file_paths,
             }
 
             row_changes <- row_changes %>%
-                mutate(old = purrr::map2_chr(.data[["id"]], .data[["changed_cols"]], ~lookup_col_value(old_data,              id_col_name, .x, .y) |> toJSON()),
-                       new = purrr::map2_chr(.data[["id"]], .data[["changed_cols"]], ~lookup_col_value(new_data_w_file_paths, id_col_name, .x, .y) |> toJSON()))
+                mutate(old = purrr::map2_chr(.data[[id_col_name]], .data[["changed_cols"]], ~lookup_col_value(old_data,              id_col_name, .x, .y) |> toJSON()),
+                       new = purrr::map2_chr(.data[[id_col_name]], .data[["changed_cols"]], ~lookup_col_value(new_data_w_file_paths, id_col_name, .x, .y) |> toJSON()))
 
             if (nrow(row_changes) == 0) row_changes <- NULL
         }

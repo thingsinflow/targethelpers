@@ -108,6 +108,24 @@ test_that("detects new and changed rows", {
     expect_equal(new, data.frame(val = "c"))
 })
 
+test_that("detects new and changed rows with custom id col name", {
+    temp_path <- withr::local_tempdir()
+    qs2::qs_save(tibble::tibble(estate_id = 1L, val = "a"), file.path(temp_path,"estate_1.qs2"))
+    qs2::qs_save(tibble::tibble(estate_id = 2L, val = "b"), file.path(temp_path,"estate_2.qs2"))
+    new_df <- tibble::tibble(estate_id = c(1L,2L), val = c("a","c") , file_path = c("estate_1.qs2", "estate_2.qs2"))
+    result <- compare_with_existing_files(new_df, id_col_name = "estate_id",
+                                          path = temp_path, file_prefix = "estate")
+    # Verify `ids_new_or_changed_rows`
+    res <- result$ids_new_or_changed_rows
+    expect_equal(res, 2L)
+    # Verify `changes`
+    res <- result$changes
+    old <- res$old |> fromJSON()
+    new <- res$new |> fromJSON()
+    expect_equal(old, data.frame(val = "b"))
+    expect_equal(new, data.frame(val = "c"))
+})
+
 test_that("returns summary of all changes when multiple columns have changed", {
     temp_path <- withr::local_tempdir()
     qs2::qs_save(tibble::tibble(id = 1L, val = "a", val2 = 1, val3 = "x"), file.path(temp_path,"estate_1.qs2"))
@@ -153,7 +171,7 @@ test_that("no debug logging when no changes or not in debug mode", {
     log_calls <- list()
     testthat::local_mocked_bindings(
         map_df = function(x, ...) data.frame(id = 3, name = "old"),
-        compare_rows = function(old, new) {
+        compare_rows = function(old, new, id = "id") {
             tibble::tibble(id = integer(0), changed_cols = character(0))
         },
         log_threshold = function() as.loglevel("INFO"),
