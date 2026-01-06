@@ -176,14 +176,33 @@ compare_with_existing_files <- function(new_data_w_file_paths,
                                                       unique()) |>
             pull(.data[[id_col_name]])
 
+        # Filter the data to compare
+        old_data_filtered <- old_data |> select(-any_of(cols_not_to_compare)) |>
+            # ...only keep rows to compare
+            filter(.data[[id_col_name]] %in% ids_new_or_changed_rows)
+        new_data_filtered <- new_data_w_file_paths |>
+            select(-"file_path",
+                   -any_of(cols_not_to_compare)) |>
+            filter(.data[[id_col_name]] %in% ids_new_or_changed_rows)
+
+        # Add informative error message to log if column names does not match
+        if (!identical(names(old_data_filtered), names(new_data_filtered))) {
+            # ...list the differences
+            log_error(sprintf("old_data_filtered has %d columns; new_data_filtered has %d columns.\nExtra columns in old: %s\nExtra columns in new: %s\n",
+                             ncol(old_data_filtered), ncol(new_data_filtered),
+                             paste(sprintf("%s (%s)", setdiff(colnames(old_data_filtered), colnames(new_data_filtered)),
+                                           sapply(setdiff(colnames(old_data_filtered), colnames(new_data_filtered)),
+                                                  function(x) paste(class(old_data_filtered[[x]]), collapse = "|"))), collapse = ", "),
+                             paste(sprintf("%s (%s)", setdiff(colnames(new_data_filtered), colnames(old_data_filtered)),
+                                           sapply(setdiff(colnames(new_data_filtered), colnames(old_data_filtered)),
+                                                  function(x) paste(class(new_data_filtered[[x]]), collapse = "|"))), collapse = ", ")))
+            stop("Column names for the new and the existing datasets do not match.")
+        }
+
         # Make summary of row changes
         if (length(ids_new_or_changed_rows) > 0) {
-            row_changes <- compare_rows(old_data |> select(-any_of(cols_not_to_compare)) |>
-                                            filter(.data[[id_col_name]] %in% ids_new_or_changed_rows),
-                                        new_data_w_file_paths |>
-                                            select(-"file_path",
-                                                   -any_of(cols_not_to_compare)) |>
-                                            filter(.data[[id_col_name]] %in% ids_new_or_changed_rows),
+            row_changes <- compare_rows(old_data_filtered,
+                                        new_data_filtered,
                                         id = id_col_name
             ) |>
                 select(all_of(id_col_name), "changed_cols")

@@ -30,6 +30,16 @@
       Error in `compare_rows()`:
       ! No columns left to compare after removing 'id'.
 
+# throws error when new column is present
+
+    Code
+      compare_with_existing_files(new_df, cols_not_to_compare = character(), path = temp_path,
+      file_prefix = "estate", extension = ".qs2")
+    Condition
+      Error in `dplyr::setdiff()`:
+      ! `x` and `y` are not compatible.
+      x Different number of columns: 3 vs 2.
+
 # errors when id column missing
 
     Code

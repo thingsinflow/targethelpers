@@ -214,6 +214,24 @@ test_that("debug logging when changes and in debug mode", {
     expect_equal(new, data.frame(val = "c"))
 })
 
+test_that("throws error when new column is present", {
+    temp_path <- withr::local_tempdir()
+    qs2::qs_save(tibble::tibble(id = 1L, val = "a"), file.path(temp_path,"estate_1.qs2"))
+    qs2::qs_save(tibble::tibble(id = 2L, val = "b"), file.path(temp_path,"estate_2.qs2"))
+    new_df <- tibble::tibble(
+        id = c(1L,2L),
+        val = c("a","c"),
+        xyz = c("new", "new"),
+        file_path = c("estate_1.qs2", "estate_2.qs2")
+    )
+    expect_snapshot(compare_with_existing_files(new_df,
+                                                cols_not_to_compare = character(),
+                                                path = temp_path,
+                                                file_prefix = "estate",
+                                                extension = ".qs2"),
+                    error = TRUE)
+})
+
 
 # save_each_row_as_a_separate_file ---------------------------------------------
 
