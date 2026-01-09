@@ -224,10 +224,10 @@ test_that("generates log message and throws error when new column is present", {
         xyz = c("new", "new"),
         file_path = c("estate_1.qs2", "estate_2.qs2")
     )
-    error_msg <- NULL
+    warn_msg <- NULL
     testthat::local_mocked_bindings(
-        log_error = function(msg) {
-            error_msg <<- msg
+        log_warn = function(msg) {
+            warn_msg <<- msg
             return()
         }
     )
@@ -238,7 +238,7 @@ test_that("generates log message and throws error when new column is present", {
                                                 extension = ".qs2",
                                                 throw_error_if_non_matching_columns = TRUE),
                     error = TRUE)
-    expect_match(error_msg, "^old_data has")
+    expect_match(warn_msg, "^old_data has")
 })
 
 test_that("generates log message and throws error when old column is not present", {
@@ -250,10 +250,10 @@ test_that("generates log message and throws error when old column is not present
         val = c("a","c"),
         file_path = c("estate_1.qs2", "estate_2.qs2")
     )
-    error_msg <- NULL
+    warn_msg <- NULL
     testthat::local_mocked_bindings(
-        log_error = function(msg) {
-            error_msg <<- msg
+        log_warn = function(msg) {
+            warn_msg <<- msg
             return()
         }
     )
@@ -264,7 +264,7 @@ test_that("generates log message and throws error when old column is not present
                                                 extension = ".qs2",
                                                 throw_error_if_non_matching_columns = TRUE),
                     error = TRUE)
-    expect_match(error_msg, "^old_data has")
+    expect_match(warn_msg, "^old_data has")
 })
 
 test_that("generates log message, adds columns and throws no error when new columns are present", {
@@ -278,10 +278,10 @@ test_that("generates log message, adds columns and throws no error when new colu
         xyz2 = c("new", "new"),
         file_path = c("estate_1.qs2", "estate_2.qs2")
     )
-    error_msg <- NULL
+    warn_msg <- NULL
     testthat::local_mocked_bindings(
-        log_error = function(msg) {
-            error_msg <<- msg
+        log_warn = function(msg) {
+            warn_msg <<- msg
             return()
         }
     )
@@ -294,7 +294,7 @@ test_that("generates log message, adds columns and throws no error when new colu
     expect_equal(result$changes$id, c(1,2))
     expect_match(result$changes$changed_cols, "xyz1")
     expect_match(result$changes$changed_cols, "xyz2")
-    expect_match(error_msg, "^old_data has")
+    expect_match(warn_msg, "^old_data has")
 })
 
 test_that("generates log message, adds columns and throws no error when old columns are not present", {
@@ -306,10 +306,10 @@ test_that("generates log message, adds columns and throws no error when old colu
         val = c("a","c"),
         file_path = c("estate_1.qs2", "estate_2.qs2")
     )
-    error_msg <- NULL
+    warn_msg <- NULL
     testthat::local_mocked_bindings(
-        log_error = function(msg) {
-            error_msg <<- msg
+        log_warn = function(msg) {
+            warn_msg <<- msg
             return()
         }
     )
@@ -322,7 +322,7 @@ test_that("generates log message, adds columns and throws no error when old colu
     expect_equal(result$changes$id, c(1,2))
     expect_match(result$changes$changed_cols, "xyz1")
     expect_match(result$changes$changed_cols, "xyz2")
-    expect_match(error_msg, "^old_data has")
+    expect_match(warn_msg, "^old_data has")
 })
 
 

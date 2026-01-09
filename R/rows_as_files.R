@@ -186,7 +186,7 @@ compare_with_existing_files <- function(new_data_w_file_paths,
             # ...list the differences
             missing_in_new <- setdiff(colnames(old_data), colnames(new_data))
             missing_in_old <- setdiff(colnames(new_data), colnames(old_data))
-            log_error(sprintf("old_data has %d columns; new_data has %d columns.\nExtra columns in old: %s\nExtra columns in new: %s\n",
+            log_warn(sprintf("old_data has %d columns; new_data has %d columns.\nExtra columns in old: %s\nExtra columns in new: %s\n",
                               ncol(old_data), ncol(new_data),
                               paste(sprintf("%s (%s)", missing_in_new,
                                             sapply(missing_in_new,
