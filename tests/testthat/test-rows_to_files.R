@@ -214,7 +214,7 @@ test_that("debug logging when changes and in debug mode", {
     expect_equal(new, data.frame(val = "c"))
 })
 
-test_that("generate log message and throws error when new column is present", {
+test_that("generates log message and throws error when new column is present", {
     temp_path <- withr::local_tempdir()
     qs2::qs_save(tibble::tibble(id = 1L, val = "a"), file.path(temp_path,"estate_1.qs2"))
     qs2::qs_save(tibble::tibble(id = 2L, val = "b"), file.path(temp_path,"estate_2.qs2"))
@@ -235,8 +235,93 @@ test_that("generate log message and throws error when new column is present", {
                                                 cols_not_to_compare = character(),
                                                 path = temp_path,
                                                 file_prefix = "estate",
-                                                extension = ".qs2"),
+                                                extension = ".qs2",
+                                                throw_error_if_non_matching_columns = TRUE),
                     error = TRUE)
+    expect_match(error_msg, "^old_data has")
+})
+
+test_that("generates log message and throws error when old column is not present", {
+    temp_path <- withr::local_tempdir()
+    qs2::qs_save(tibble::tibble(id = 1L, val = "a", xyz = "old"), file.path(temp_path,"estate_1.qs2"))
+    qs2::qs_save(tibble::tibble(id = 2L, val = "b", xyz = "old"), file.path(temp_path,"estate_2.qs2"))
+    new_df <- tibble::tibble(
+        id = c(1L,2L),
+        val = c("a","c"),
+        file_path = c("estate_1.qs2", "estate_2.qs2")
+    )
+    error_msg <- NULL
+    testthat::local_mocked_bindings(
+        log_error = function(msg) {
+            error_msg <<- msg
+            return()
+        }
+    )
+    expect_snapshot(compare_with_existing_files(new_df,
+                                                cols_not_to_compare = character(),
+                                                path = temp_path,
+                                                file_prefix = "estate",
+                                                extension = ".qs2",
+                                                throw_error_if_non_matching_columns = TRUE),
+                    error = TRUE)
+    expect_match(error_msg, "^old_data has")
+})
+
+test_that("generates log message, adds columns and throws no error when new columns are present", {
+    temp_path <- withr::local_tempdir()
+    qs2::qs_save(tibble::tibble(id = 1L, val = "a"), file.path(temp_path,"estate_1.qs2"))
+    qs2::qs_save(tibble::tibble(id = 2L, val = "b"), file.path(temp_path,"estate_2.qs2"))
+    new_df <- tibble::tibble(
+        id = c(1L,2L),
+        val = c("a","c"),
+        xyz1 = c("new", "new"),
+        xyz2 = c("new", "new"),
+        file_path = c("estate_1.qs2", "estate_2.qs2")
+    )
+    error_msg <- NULL
+    testthat::local_mocked_bindings(
+        log_error = function(msg) {
+            error_msg <<- msg
+            return()
+        }
+    )
+    result <- compare_with_existing_files(new_df,
+                                          cols_not_to_compare = character(),
+                                          path = temp_path,
+                                          file_prefix = "estate",
+                                          extension = ".qs2")
+    expect_equal(result$ids_new_or_changed_rows, c(1,2))
+    expect_equal(result$changes$id, c(1,2))
+    expect_match(result$changes$changed_cols, "xyz1")
+    expect_match(result$changes$changed_cols, "xyz2")
+    expect_match(error_msg, "^old_data has")
+})
+
+test_that("generates log message, adds columns and throws no error when old columns are not present", {
+    temp_path <- withr::local_tempdir()
+    qs2::qs_save(tibble::tibble(id = 1L, val = "a", xyz1 = c("old"), xyz2 = c("old")), file.path(temp_path,"estate_1.qs2"))
+    qs2::qs_save(tibble::tibble(id = 2L, val = "b", xyz1 = c("old"), xyz2 = c("old")), file.path(temp_path,"estate_2.qs2"))
+    new_df <- tibble::tibble(
+        id = c(1L,2L),
+        val = c("a","c"),
+        file_path = c("estate_1.qs2", "estate_2.qs2")
+    )
+    error_msg <- NULL
+    testthat::local_mocked_bindings(
+        log_error = function(msg) {
+            error_msg <<- msg
+            return()
+        }
+    )
+    result <- compare_with_existing_files(new_df,
+                                          cols_not_to_compare = character(),
+                                          path = temp_path,
+                                          file_prefix = "estate",
+                                          extension = ".qs2")
+    expect_equal(result$ids_new_or_changed_rows, c(1,2))
+    expect_equal(result$changes$id, c(1,2))
+    expect_match(result$changes$changed_cols, "xyz1")
+    expect_match(result$changes$changed_cols, "xyz2")
     expect_match(error_msg, "^old_data has")
 })
 

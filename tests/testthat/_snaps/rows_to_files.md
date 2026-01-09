@@ -30,11 +30,22 @@
       Error in `compare_rows()`:
       ! No columns left to compare after removing 'id'.
 
-# throws error when new column is present
+# generates log message and throws error when new column is present
 
     Code
       compare_with_existing_files(new_df, cols_not_to_compare = character(), path = temp_path,
-      file_prefix = "estate", extension = ".qs2")
+      file_prefix = "estate", extension = ".qs2",
+      throw_error_if_non_matching_columns = TRUE)
+    Condition
+      Error in `compare_with_existing_files()`:
+      ! Column names for the new and the existing datasets do not match.
+
+# generates log message and throws error when old column is not present
+
+    Code
+      compare_with_existing_files(new_df, cols_not_to_compare = character(), path = temp_path,
+      file_prefix = "estate", extension = ".qs2",
+      throw_error_if_non_matching_columns = TRUE)
     Condition
       Error in `compare_with_existing_files()`:
       ! Column names for the new and the existing datasets do not match.

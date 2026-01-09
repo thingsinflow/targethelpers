@@ -10,7 +10,8 @@ compare_with_existing_files(
   id_col_name = "id",
   path,
   file_prefix,
-  extension = ".qs2"
+  extension = ".qs2",
+  throw_error_if_non_matching_columns = FALSE
 )
 }
 \arguments{
@@ -29,6 +30,11 @@ comparison (default is \code{"images"}).}
 
 \item{extension}{File extension to match - must be either \code{".qs2"} or
 \code{".parquet"} (default \code{".qs2"}).}
+
+\item{throw_error_if_non_matching_columns}{Logical. If TRUE the function
+throws an error if the datasets to compare do not have identical column
+names. If FALSE (the default) columns with empty value and correct type
+(=same type as in the other dataset) is inserted before the comparison.}
 }
 \value{
 A list with two components:

@@ -104,6 +104,10 @@ compare_rows <- function(df1, df2, id = "id") {
 #' @param file_prefix Prefix used for the filenames (default `"estate"`).
 #' @param extension File extension to match - must be either `".qs2"` or
 #'   `".parquet"` (default `".qs2"`).
+#' @param throw_error_if_non_matching_columns Logical. If TRUE the function
+#'   throws an error if the datasets to compare do not have identical column
+#'   names. If FALSE (the default) columns with empty value and correct type
+#'   (=same type as in the other dataset) is inserted before the comparison.
 #'
 #' @return A list with two components:
 #' \describe{
@@ -147,7 +151,8 @@ compare_with_existing_files <- function(new_data_w_file_paths,
                                         id_col_name = "id",
                                         path,
                                         file_prefix,
-                                        extension = ".qs2") {
+                                        extension = ".qs2",
+                                        throw_error_if_non_matching_columns = FALSE) {
 
     # Make sure we're working on a tibble
     new_data_w_file_paths <- new_data_w_file_paths |> as_tibble()
@@ -167,40 +172,56 @@ compare_with_existing_files <- function(new_data_w_file_paths,
         old_data <- existing_files |>
             # map_df(readRDS)
             # map_df(qs_read)
-            map_df(read_func)
+            map_df(read_func) |>
+            select(-any_of(cols_not_to_compare)) |>
+            unique()
         new_data <- new_data_w_file_paths |>
-            select(-"file_path")
+            select(-"file_path",
+                   -any_of(cols_not_to_compare))
 
-        # Add informative error message to log if column names does not match
-        if (!identical(names(old_data), names(new_data))) {
+        # Add informative error message to log if column names do not match
+        missing_in_new <- NULL
+        missing_in_old <- NULL
+        if (!identical(colnames(old_data), colnames(new_data))) {
             # ...list the differences
+            missing_in_new <- setdiff(colnames(old_data), colnames(new_data))
+            missing_in_old <- setdiff(colnames(new_data), colnames(old_data))
             log_error(sprintf("old_data has %d columns; new_data has %d columns.\nExtra columns in old: %s\nExtra columns in new: %s\n",
                               ncol(old_data), ncol(new_data),
-                              paste(sprintf("%s (%s)", setdiff(colnames(old_data), colnames(new_data)),
-                                            sapply(setdiff(colnames(old_data), colnames(new_data)),
+                              paste(sprintf("%s (%s)", missing_in_new,
+                                            sapply(missing_in_new,
                                                    function(x) paste(class(old_data[[x]]), collapse = "|"))), collapse = ", "),
-                              paste(sprintf("%s (%s)", setdiff(colnames(new_data), colnames(old_data)),
-                                            sapply(setdiff(colnames(new_data), colnames(old_data)),
+                              paste(sprintf("%s (%s)", missing_in_old,
+                                            sapply(missing_in_old,
                                                    function(x) paste(class(new_data[[x]]), collapse = "|"))), collapse = ", ")))
-            stop("Column names for the new and the existing datasets do not match.")
+
+            # Throw error if specified to do so
+            if (throw_error_if_non_matching_columns == TRUE)
+                stop("Column names for the new and the existing datasets do not match.")
         }
 
-        ids_new_or_changed_rows <- dplyr::setdiff(new_data_w_file_paths |>
-                                                      select(-"file_path",
-                                                             -any_of(cols_not_to_compare)),
-                                                  old_data |>
-                                                      select(-any_of(cols_not_to_compare)) |>
-                                                      unique()) |>
-            pull(.data[[id_col_name]])
+        # Add missing columns with NAs
+        if (!is_empty(missing_in_old)) {
+            old_data <- old_data |>
+                left_join(new_data |>
+                              # ...extract empty col values with correct type to insert into old_data
+                              select(any_of(c(id_col_name, missing_in_old))) |> mutate(id = NA) |> unique(),
+                          by = id_col_name)
+        }
+        if (!is_empty(missing_in_new)) {
+            new_data <- new_data |>
+                left_join(old_data |>
+                              # ...extract empty col values with correct type to insert into new_data
+                              select(any_of(c(id_col_name, missing_in_new))) |> mutate(id = NA) |> unique(),
+                          by = id_col_name)
+        }
 
-        # Filter the data to compare
-        old_data_filtered <- old_data |> select(-any_of(cols_not_to_compare)) |>
-            # ...only keep rows to compare
-            filter(.data[[id_col_name]] %in% ids_new_or_changed_rows)
-        new_data_filtered <- new_data_w_file_paths |>
-            select(-"file_path",
-                   -any_of(cols_not_to_compare)) |>
-            filter(.data[[id_col_name]] %in% ids_new_or_changed_rows)
+        # Identify all new or changed rows
+        ids_new_or_changed_rows <- dplyr::setdiff(new_data, old_data) |> pull(.data[[id_col_name]])
+
+        # Filter the data in order to only keep rows to compare
+        old_data_filtered <- old_data |> filter(.data[[id_col_name]] %in% ids_new_or_changed_rows)
+        new_data_filtered <- new_data |> filter(.data[[id_col_name]] %in% ids_new_or_changed_rows)
 
         # Make summary of row changes
         if (length(ids_new_or_changed_rows) > 0) {
@@ -226,14 +247,17 @@ compare_with_existing_files <- function(new_data_w_file_paths,
             }
 
             row_changes <- row_changes %>%
-                mutate(old = purrr::map2_chr(.data[[id_col_name]], .data[["changed_cols"]], ~lookup_col_value(old_data,              id_col_name, .x, .y) |> toJSON()),
-                       new = purrr::map2_chr(.data[[id_col_name]], .data[["changed_cols"]], ~lookup_col_value(new_data_w_file_paths, id_col_name, .x, .y) |> toJSON()))
+                mutate(old = purrr::map2_chr(.data[[id_col_name]], .data[["changed_cols"]], ~lookup_col_value(old_data, id_col_name, .x, .y) |> toJSON()),
+                       new = purrr::map2_chr(.data[[id_col_name]], .data[["changed_cols"]], ~lookup_col_value(new_data, id_col_name, .x, .y) |> toJSON()))
 
             if (nrow(row_changes) == 0) row_changes <- NULL
         }
+    } else {
+        # There was no existing data to compare with so all rows are new
+        new_data <- new_data_w_file_paths
     }
 
-    if (!exists("ids_new_or_changed_rows")) ids_new_or_changed_rows <- new_data_w_file_paths[[id_col_name]]
+    if (!exists("ids_new_or_changed_rows")) ids_new_or_changed_rows <- new_data[[id_col_name]]
     if (!exists("row_changes"))                         row_changes <- NULL
 
     # Return a list of ids of all the new or changed rows and summary (compared to existing file data)
