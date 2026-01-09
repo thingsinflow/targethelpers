@@ -214,7 +214,7 @@ test_that("debug logging when changes and in debug mode", {
     expect_equal(new, data.frame(val = "c"))
 })
 
-test_that("throws error when new column is present", {
+test_that("generate log message and throws error when new column is present", {
     temp_path <- withr::local_tempdir()
     qs2::qs_save(tibble::tibble(id = 1L, val = "a"), file.path(temp_path,"estate_1.qs2"))
     qs2::qs_save(tibble::tibble(id = 2L, val = "b"), file.path(temp_path,"estate_2.qs2"))
