@@ -36,9 +36,8 @@
       compare_with_existing_files(new_df, cols_not_to_compare = character(), path = temp_path,
       file_prefix = "estate", extension = ".qs2")
     Condition
-      Error in `dplyr::setdiff()`:
-      ! `x` and `y` are not compatible.
-      x Different number of columns: 3 vs 2.
+      Error in `compare_with_existing_files()`:
+      ! Column names for the new and the existing datasets do not match.
 
 # errors when id column missing
 

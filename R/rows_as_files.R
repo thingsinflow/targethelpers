@@ -168,6 +168,23 @@ compare_with_existing_files <- function(new_data_w_file_paths,
             # map_df(readRDS)
             # map_df(qs_read)
             map_df(read_func)
+        new_data <- new_data_w_file_paths |>
+            select(-"file_path")
+
+        # Add informative error message to log if column names does not match
+        if (!identical(names(old_data), names(new_data))) {
+            # ...list the differences
+            log_error(sprintf("old_data has %d columns; new_data has %d columns.\nExtra columns in old: %s\nExtra columns in new: %s\n",
+                              ncol(old_data), ncol(new_data),
+                              paste(sprintf("%s (%s)", setdiff(colnames(old_data), colnames(new_data)),
+                                            sapply(setdiff(colnames(old_data), colnames(new_data)),
+                                                   function(x) paste(class(old_data[[x]]), collapse = "|"))), collapse = ", "),
+                              paste(sprintf("%s (%s)", setdiff(colnames(new_data), colnames(old_data)),
+                                            sapply(setdiff(colnames(new_data), colnames(old_data)),
+                                                   function(x) paste(class(new_data[[x]]), collapse = "|"))), collapse = ", ")))
+            stop("Column names for the new and the existing datasets do not match.")
+        }
+
         ids_new_or_changed_rows <- dplyr::setdiff(new_data_w_file_paths |>
                                                       select(-"file_path",
                                                              -any_of(cols_not_to_compare)),
@@ -184,20 +201,6 @@ compare_with_existing_files <- function(new_data_w_file_paths,
             select(-"file_path",
                    -any_of(cols_not_to_compare)) |>
             filter(.data[[id_col_name]] %in% ids_new_or_changed_rows)
-
-        # Add informative error message to log if column names does not match
-        if (!identical(names(old_data_filtered), names(new_data_filtered))) {
-            # ...list the differences
-            log_error(sprintf("old_data_filtered has %d columns; new_data_filtered has %d columns.\nExtra columns in old: %s\nExtra columns in new: %s\n",
-                             ncol(old_data_filtered), ncol(new_data_filtered),
-                             paste(sprintf("%s (%s)", setdiff(colnames(old_data_filtered), colnames(new_data_filtered)),
-                                           sapply(setdiff(colnames(old_data_filtered), colnames(new_data_filtered)),
-                                                  function(x) paste(class(old_data_filtered[[x]]), collapse = "|"))), collapse = ", "),
-                             paste(sprintf("%s (%s)", setdiff(colnames(new_data_filtered), colnames(old_data_filtered)),
-                                           sapply(setdiff(colnames(new_data_filtered), colnames(old_data_filtered)),
-                                                  function(x) paste(class(new_data_filtered[[x]]), collapse = "|"))), collapse = ", ")))
-            stop("Column names for the new and the existing datasets do not match.")
-        }
 
         # Make summary of row changes
         if (length(ids_new_or_changed_rows) > 0) {

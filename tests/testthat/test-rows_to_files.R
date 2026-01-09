@@ -224,12 +224,20 @@ test_that("throws error when new column is present", {
         xyz = c("new", "new"),
         file_path = c("estate_1.qs2", "estate_2.qs2")
     )
+    error_msg <- NULL
+    testthat::local_mocked_bindings(
+        log_error = function(msg) {
+            error_msg <<- msg
+            return()
+        }
+    )
     expect_snapshot(compare_with_existing_files(new_df,
                                                 cols_not_to_compare = character(),
                                                 path = temp_path,
                                                 file_prefix = "estate",
                                                 extension = ".qs2"),
                     error = TRUE)
+    expect_match(error_msg, "^old_data has")
 })
 
 
