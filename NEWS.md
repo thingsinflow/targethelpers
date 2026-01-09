@@ -1,3 +1,7 @@
+# targethelpers 0.3.1
+
+-   Reduced log level from error to warn for internal function compare_with_existing_files() in case of colnames mismatch.
+
 # targethelpers 0.3.0
 
 -   Added a setting (throw_error_if_non_matching_columns) to the compare_with_existing_files() internal function.
